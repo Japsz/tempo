@@ -4,16 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var http = require('http');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
 
+
 // view engine setup
+app.set('port', process.env.PORT || 4300);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -41,6 +43,10 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+http.createServer(app).listen(app.get('port'), function(){
+    console.log('The game starts on port ' + app.get('port'));
 });
 
 module.exports = app;
