@@ -1,0 +1,62 @@
+
+<input type="hidden" id="largo" value="<%=databd.length%>">
+<%for(var h=0; h < databd.length; h++){%>
+	<div id="data<%=h%>">
+		<input type="hidden" class="detalle" value="<%=databd[h].detalle%>">
+		<input type="hidden" class="fecha_p" value="<%=databd[h].fecha_p%>">
+		<input type="hidden" class="fecha_dia" value="<%=databd[h].fecha_p.getDate()%>">	
+	</div>
+<%}%>
+
+<table>
+
+	<thead class="thead-dark">
+			    <tr>
+			      <th scope="col">Domingo</th>
+			      <th scope="col">Lunes</th>
+			      <th scope="col">Martes</th>
+			      <th scope="col">Miercoles</th>
+			      <th scope="col">Jueves</th>
+			      <th scope="col">Viernes</th>
+			      <th scope="col">Sabado</th>
+			    </tr>
+	</thead>
+	<tbody class="calendario">
+			    
+	</tbody>
+</table>
+<script type="text/javascript">
+	
+	var data = [];
+	for(var a=0; a < $("#largo").val(); a++){
+		data[a] = {
+			detalle: $("#data"+a+" .detalle").val(),
+			fecha_p:  $("#data"+a+" .fecha_p").val(),
+			fecha_dia: $("#data"+a+" .fecha_dia").val()
+		};
+	}
+	console.log(data);
+	var mes;
+	var dias = [];
+	var dias_mes = [31,28,31,30,31,30,31,31,30,31,30,31];
+	var fecha = new Date();
+	fecha.setFullYear(2017, $("#indice_mes").val()-1, 1);
+	var dia_semana = fecha.getDay(); 
+	for(var j=1; j <= dias_mes[$("#indice_mes").val()-1]; j++){
+			var eventos = [];
+			dias[j-1] = new Dia(dia_semana, j, eventos);
+			dia_semana++;
+			if(dia_semana == 7){
+				dia_semana = 0;
+			}
+	}
+	for(var i=0; i< data.length; i++){
+		console.log(data[i].detalle);
+		console.log(dias[data[i].fecha_dia-1].eventos.length);
+		dias[data[i].fecha_dia-1].eventos[dias[data[i].fecha_dia-1].eventos.length] = data[i].detalle;
+	}
+	mes = new Mes(dias);
+	console.log(mes);
+	$(".calendario").html(mes.render());
+
+</script>

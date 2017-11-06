@@ -3,151 +3,62 @@
 <style type="text/css">
 	
 	.day-item{
+		height: 100%;
 		padding: 5px;
 		border-radius: 5%;
 		border: 1px solid #0074d9;
 	}
 	.day-item:hover{
 		cursor: pointer;
-		background-color: black;
+		color: white;
+		background-color: #0074d9;
 	}
-	.calendario tr td{
+	.calendario td{
+		height: 100%;
 		padding: 5px;
 		margin: 0px;
 	} 
 
 </style>
-<input type="hidden" id="largo" value="<%=databd.length%>">
-<%for(var h=0; h < databd.length; h++){%>
-	<div id="data<%=h%>">
-		<input type="hidden" class="detalle" value="<%=databd[h].detalle%>">
-		<input type="hidden" class="fecha_p" value="<%=databd[h].fecha_p%>">
-		<input type="hidden" class="fecha_dia" value="<%=databd[h].fecha_p.getDate()%>">	
-	</div>
-<%}%>
+
 <div style="margin-left: 15%; margin-right: 15%; margin-top: 20px; background-color: rgb(220,220,220); padding: 20px; box-shadow: 10px 10px 5px #888888; ">
 <h1 class="page-header">Calendario de flujo:</h1>
-	<div style="margin-right: 2%; margin-left: 2%; background-color: white" class="row">
-			<select id="indice_mes">
-				<option value="10">Enero</option>
-				<option value="1">Febrero</option>
-				<option value="2">Marzo</option>
-				<option value="3">Abril</option>
-				<option value="4">Mayo</option>
-				<option value="5">Junio</option>
-				<option value="6">Julio</option>
-				<option value="7">Agosto</option>
-				<option value="8">Septiembre</option>
-				<option value="9">Octubre</option>
-				<option value="10">Noviembre</option>
-				<option value="11">Diciembre</option>
+	<select id="indice_mes" onchange="cambiar()">
+				<option value="1">Enero</option>
+				<option value="2">Febrero</option>
+				<option value="3">Marzo</option>
+				<option value="4">Abril</option>
+				<option value="5">Mayo</option>
+				<option value="6">Junio</option>
+				<option value="7">Julio</option>
+				<option value="8">Agosto</option>
+				<option value="9">Septiembre</option>
+				<option value="10">Octubre</option>
+				<option value="11">Noviembre</option>
+				<option value="12">Diciembre</option>
 			</select>
-  			<table class="table-calendar">
-			  <thead class="thead-dark">
-			    <tr>
-			      <th scope="col">Domingo</th>
-			      <th scope="col">Lunes</th>
-			      <th scope="col">Martes</th>
-			      <th scope="col">Miercoles</th>
-			      <th scope="col">Jueves</th>
-			      <th scope="col">Viernes</th>
-			      <th scope="col">Sabado</th>
-			    </tr>
-			  </thead>
-			  <tbody class="calendario">
-			    
-			  </tbody>
-			</table>
+	<div style="margin-right: 2%; margin-left: 2%; background-color: white" class="row calendario-section">
+  			
 	</div>
 </div>
 
 <script type="text/javascript">
-	class Dia{
-		constructor(dia, fecha, eventos){
-			this.dia = dia;//dia de la semana
-			this.fecha = fecha;//dia del mes
-			this.eventos = eventos;
-		}
-	}
-	class Mes{
-		constructor(dias/*ARRAY CON DIAS*/){
-			this.dias = dias;
-		}
-		render(){
-			var html = "";
-			for(var d=0; d < this.dias.length; d++){
-				
-				if(this.dias[d].dia == 0){
-					html += "<tr>";
-				}
-
-				if(d == 0){
-					html += "<tr>";
-					for(var j=0; j<this.dias[d].dia ; j++){
-						html += "<td></td>";
-					}
-				}
-
-				
-				html += "<td><div class='day-item'>"+this.dias[d].fecha;
-				if(this.dias[d].eventos.length > 0){
-					for(var h=0; h < this.dias[d].eventos.length; h++){
-						html += "<p>"+this.dias[d].eventos[h]+"</p>";
-					}
-				}
-				else{
-					html += "<p>No hay eventos en esta fecha</p>";
-				}
-				html += "</div></td>";
-				
-				if(this.dias[d].dia == 6){
-					html += "</tr>";
-				}
-				else if(d == this.dias.length-1){
-					for(var j=0; j<(6-this.dias[d].dia) ; j++){
-						html += "<td></td>";
-					}
-					html += "</tr>";
-
-				}
+	$.ajax({
+			type: 'GET',
+			url: 'render_calendar/'+$("#indice_mes").val(),
+			success: function(data){
+				$(".calendario-section").html(data);				
 			}
-			console.log("RENDERIZANDO");
-			return html;
-		}
-	}
-	var data = [];
-	for(var a=0; a < $("#largo").val(); a++){
-		data[a] = {
-			detalle: $("#data"+a+" .detalle").val(),
-			fecha_p:  $("#data"+a+" .fecha_p").val(),
-			fecha_dia: $("#data"+a+" .fecha_dia").val()
-		};
-	}
-	console.log(data);
-	var mes;
-	var dias = [];
-	var dias_mes = [31,28,31,30,31,30,31,31,30,31,30,31];
-	var fecha = new Date();
-	fecha.setFullYear(2017, $("#indice_mes").val(), 1);
-	var dia_semana = fecha.getDay(); 
-	for(var j=1; j <= dias_mes[$("#indice_mes").val()]; j++){
-			var eventos = [];
-			dias[j-1] = new Dia(dia_semana, j, eventos);
-			dia_semana++;
-			if(dia_semana == 7){
-				dia_semana = 0;
+		});
+	function cambiar(){
+		$.ajax({
+			type: 'GET',
+			url: 'render_calendar/'+$("#indice_mes").val(),
+			success: function(data){
+				$(".calendario-section").html(data);				
 			}
+		});
 	}
-	for(var i=0; i< data.length; i++){
-		console.log(data[i].detalle);
-		console.log(dias[data[i].fecha_dia-1].eventos.length);
-		dias[data[i].fecha_dia-1].eventos[dias[data[i].fecha_dia-1].eventos.length] = data[i].detalle;
-	}
-	mes = new Mes(dias);
-	console.log(mes);
-	$(".calendario").html(mes.render());
-
-
 
 
 </script>

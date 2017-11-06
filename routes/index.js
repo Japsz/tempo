@@ -30,16 +30,21 @@ router.get('/render_section/:id_frame', function(req, res, next){
 		        res.render('main/flujo_view');
 		        break;
 		    case 'informe':
-		    	req.getConnection(function(err, connection){
-		    		connection.query("SELECT fecha_p,detalle FROM egreso WHERE fecha_p BETWEEN '2017-11-01 00:00:00' AND '2017-11-31 00:00:00'", function(err, rows){
-		    			if(err){console.log("Error Selecting : %s", err);}
-				        res.render('main/informe_view', {databd: rows});
-		    		});
-		    	});
+				res.render('main/informe_view');
 		        break;
 		    default:
 		        res.render('main/cc_view');
 	}
 });
 
+
+router.get('/render_calendar/:indice_mes', function(req, res, next){
+	var mes = req.params.indice_mes;
+	req.getConnection(function(err, connection){
+		connection.query("SELECT fecha_p,detalle FROM egreso WHERE fecha_p BETWEEN '2017-"+mes+"-01 00:00:00' AND '2017-"+mes+"-31 00:00:00'", function(err, rows){
+			if(err){console.log("Error Selecting : %s", err);}
+			res.render("main/calendario", {databd: rows});			    
+		});
+	});
+});
 module.exports = router;
