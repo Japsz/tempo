@@ -2,6 +2,7 @@
 <input type="hidden" id="largo" value="<%=databd.length%>">
 <%for(var h=0; h < databd.length; h++){%>
 	<div id="data<%=h%>">
+		<input type="hidden" class="monto" value="<%=databd[h].monto%>">
 		<input type="hidden" class="detalle" value="<%=databd[h].detalle%>">
 		<input type="hidden" class="fecha_p" value="<%=databd[h].fecha_p%>">
 		<input type="hidden" class="fecha_dia" value="<%=databd[h].fecha_p.getDate()%>">	
@@ -30,6 +31,7 @@
 	var data = [];
 	for(var a=0; a < $("#largo").val(); a++){
 		data[a] = {
+			monto: $("#data"+a+" .monto").val(),
 			detalle: $("#data"+a+" .detalle").val(),
 			fecha_p:  $("#data"+a+" .fecha_p").val(),
 			fecha_dia: $("#data"+a+" .fecha_dia").val()
@@ -44,7 +46,7 @@
 	var dia_semana = fecha.getDay(); 
 	for(var j=1; j <= dias_mes[$("#indice_mes").val()-1]; j++){
 			var eventos = [];
-			dias[j-1] = new Dia(dia_semana, j, eventos);
+			dias[j-1] = new Dia(dia_semana, j, eventos, 0);
 			dia_semana++;
 			if(dia_semana == 7){
 				dia_semana = 0;
@@ -54,6 +56,7 @@
 		console.log(data[i].detalle);
 		console.log(dias[data[i].fecha_dia-1].eventos.length);
 		dias[data[i].fecha_dia-1].eventos[dias[data[i].fecha_dia-1].eventos.length] = data[i].detalle;
+		dias[data[i].fecha_dia-1].monto += parseInt(data[i].monto);
 	}
 	mes = new Mes(dias);
 	console.log(mes);

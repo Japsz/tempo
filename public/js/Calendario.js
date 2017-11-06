@@ -1,8 +1,9 @@
 class Dia{
-		constructor(dia, fecha, eventos){
+		constructor(dia, fecha, eventos, monto){
 			this.dia = dia;//dia de la semana
 			this.fecha = fecha;//dia del mes
 			this.eventos = eventos;
+			this.monto = monto;
 		}
 	}
 class Mes{
@@ -25,16 +26,21 @@ class Mes{
 			}
 
 				
-			html += "<td><div class='day-item'><b>"+this.dias[d].fecha+"</b>";
+			html += "<td><div class='day-item'><div style='display: flex'><b>"+this.dias[d].fecha+"</b>";
 			if(this.dias[d].eventos.length > 0){
+				html += "<span class='glyphicon glyphicon-pencil'></span></div>";
 				for(var h=0; h < this.dias[d].eventos.length; h++){
-		
-					html += "<p>"+this.dias[d].eventos[h]+"</p>";
+					html += "<p class='details'>"+this.dias[d].eventos[h]+"</p>";
 				}
 			}
 			else{
-				html += "<p>No hay eventos en esta fecha</p>";
+				html += "</div><p class='details'>No hay eventos en esta fecha</p>";
 			}
+
+			if(this.dias[d].monto > 0){
+				html += "<b>-$"+this.dias[d].monto+"</b>"
+			}
+
 			html += "</div></td>";
 				
 			if(this.dias[d].dia == 6){

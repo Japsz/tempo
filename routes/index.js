@@ -41,8 +41,9 @@ router.get('/render_section/:id_frame', function(req, res, next){
 router.get('/render_calendar/:indice_mes', function(req, res, next){
 	var mes = req.params.indice_mes;
 	req.getConnection(function(err, connection){
-		connection.query("SELECT fecha_p,detalle FROM egreso WHERE fecha_p BETWEEN '2017-"+mes+"-01 00:00:00' AND '2017-"+mes+"-31 00:00:00'", function(err, rows){
+		connection.query("SELECT monto,fecha_p,detalle FROM egreso WHERE fecha_p BETWEEN '2017-"+mes+"-01 00:00:00' AND '2017-"+mes+"-31 00:00:00'", function(err, rows){
 			if(err){console.log("Error Selecting : %s", err);}
+			console.log(rows);
 			res.render("main/calendario", {databd: rows});			    
 		});
 	});
