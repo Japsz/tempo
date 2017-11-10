@@ -4,20 +4,23 @@
 		border: solid 1px white;
 		padding: 20px;
 		margin: 15px;
-		color: white;
+		color: black;
+		background-color: white;
+		border-radius: 2%;
 	}
 	.item ul li{
 		display: flex;
 	}
 </style>
-<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: blue; padding: 20px; box-shadow: 10px 10px 5px #888888; ">
+<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888; ">
 
 
 	
-
+<input type="hidden" id="codigo" value="<%=number%>">
 <input type="hidden" id="largoEgresos" value="<%=dataEgresos.length%>">
 <%for(var h=0; h < dataEgresos.length; h++){%>
 	<div id="dataEgresos<%=h%>">
+		<input type="hidden" class="id" value="<%=dataEgresos[h].id%>">
 		<input type="hidden" class="monto" value="<%=parseInt(dataEgresos[h].monto)*number%>">
 		<input type="hidden" class="detalle" value="<%=dataEgresos[h].detalle%>">
 		<input type="hidden" class="fecha_p" value="<%=dataEgresos[h].fecha_p%>">
@@ -26,7 +29,7 @@
 	</div>
 <%}%>
 
-<h1 class="page-header">Calendario de flujo:</h1>
+<h1 class="page-header"><%=titulo%></h1>
 <div class="owl-carousel">
 </div>
 
@@ -43,12 +46,13 @@
 <script type="text/javascript">
 	
 	var array = new arrayFechas([]);
-
+	var idFlujo;
 
 	var data = [];
 	for(var a=0; a < $("#largoEgresos").val(); a++){
 		console.log(a);
 		data[a] = {
+			id: $("#dataEgresos"+a+" .id").val(),
 			monto: $("#dataEgresos"+a+" .monto").val(),
 			detalle: $("#dataEgresos"+a+" .detalle").val(),
 			fecha_p:  $("#dataEgresos"+a+" .fecha_p").val(),
@@ -67,6 +71,7 @@
 			array.fechas[ind] = new Fecha(data[k].fecha_p, new Evento());
 			
 			var datos = {
+				id: data[k].id,
 				detalle: data[k].detalle,
 				monto: data[k].monto,
 				nombre_cdc: data[k].cdc
@@ -76,6 +81,7 @@
 		else{//YA EXISTE REGISTRO DE LA FECHA
 			//SE AGREGA EL EVENTO A LA FECHA
 			var datos = {
+				id: data[k].id,
 				detalle: data[k].detalle,
 				monto: data[k].monto,
 				nombre_cdc: data[k].cdc
@@ -87,7 +93,12 @@
 
 
 	console.log(array);
-	$(".owl-carousel").html(array.render());
+	if($("#codigo").val() == -1){
+		$(".owl-carousel").html(array.render('E'));
+	}
+	else if($("#codigo").val() == 1){
+		$(".owl-carousel").html(array.render('I'));	
+	}
 	$(".owl-carousel").owlCarousel({
 
         navigation : true, // Show next and prev buttons
@@ -103,4 +114,24 @@
         // itemsMobile : false
   			});
 	
+
+	$(".editDate").on('click', function(e){
+		e.preventDefault();
+		idFlujo = $(this).data('idflujo');
+	});
+
+
+	$(".saveDate").on('click', function(e){
+		e.preventDefault();
+		var inputdate =  $("#inputdate"+$(this).data('idinput')).val();
+		console.log($(this).val());
+		$.ajax({
+			type: 'GET',
+			url: '/save_date/'+$(this).data('cod')+'/'+idFlujo+'/'+inputdate,
+			success: function(data){
+				alert(data);
+			}
+		});
+	});
+
 </script>
