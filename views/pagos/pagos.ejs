@@ -1,0 +1,91 @@
+<div class="col-md-10 col-md-offset-1">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h1 class="page-header"><%= titulo%>s:<a class="btn btn-success pull-right" data-toggle="collapse" href="#new_pay"> + Nuevo</a></h1>
+		</div>
+		<div class="panel-body collapse" id="new_pay">
+			<form id="payform">
+				<h3>Nuevo:</h3>
+				<div class="form-group">
+					<input placeholder="Descripción" type="text" name="detalle" class="form-control" required>
+				</div>
+				<div class="form-inline">
+					<input placeholder="N° Factura" type="text" name="n_factura" class="form-control" required>
+					<input placeholder="Monto" type="number" name="monto" class="form-control" required>
+				</div>
+				<label>Fecha de pago</label>
+				<input type="date" name="fecha" class="form-control" required>
+				<label>Centro de costo</label>
+				<select name="idcdc" class="form-control">
+
+					<% if(cdc.length){
+						for(var i = 0;i<cdc.length;i++){%>
+					<option value="<%= cdc[i].idcdc%>"><%=cdc[i].nombre%></option>
+					<%}
+					}%>
+				</select>
+
+				<a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
+
+				<input type="hidden" class="hidden" name="tipo" value="<%= titulo%>">
+			</form>
+		</div>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<td>Detalle</td>
+				<td>N° Factura</td>
+				<td>Fecha</td>
+				<td>Monto</td>
+				<td>Cdc</td>
+				<td></td>
+			</tr>
+			</thead>
+			<tbody>
+            <% if(data.length){
+			for(var i = 0;i<data.length;i++){
+            %>
+			<tr>
+				<td><%= data[i].detalle%></td>
+				<td><%= data[i].n_factura%></td>
+				<td><%= new Date(data[i].fecha).toLocaleDateString()%></td>
+				<td><%= data[i].monto%></td>
+				<td><%= data[i].nombre%></td>
+				<td><a class="btn btn-info"><i class="fa fa-eye"></i>Ver</a></td>
+			</tr>
+            <% }
+			} else {%>
+			<tr>
+				<td>No hay facturas</td>
+			</tr>
+            <%}%>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(".sending").click(function(e){
+        var formArray = $("#payform").serializeArray();
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++){
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        $.ajax({
+			url: "/cdc/save_pay",
+			type: 'POST',
+			data: returnArray,
+			success: function(data){
+			    $("#page-container").html(data);
+			}
+		})
+	});
+	$(".vercdc").click(function(e){
+	    $.ajax({
+			url:"/cdc/show/" + $(this).data('idcdc'),
+			success: function(data){
+			    $("#page-container").html(data);
+			}
+		})
+	})
+</script>
