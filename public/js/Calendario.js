@@ -18,7 +18,7 @@ class Mes{
 				html += "<tr>";
 			}
 
-			if(d == 0){
+			else if(d == 0){
 				html += "<tr>";
 				for(var j=0; j<this.dias[d].dia ; j++){
 					html += "<td></td>";
@@ -26,19 +26,26 @@ class Mes{
 			}
 
 				
-			html += "<td><div class='day-item'><div style='display: flex'><b>"+this.dias[d].fecha+"</b>";
 			if(this.dias[d].eventos.length > 0){
+				html += "<td><div class='day-item item-click' data-toggle='modal' data-target='#detailsModal'><div style='display: flex'><b>"+this.dias[d].fecha+"</b>";
 				html += "<span class='glyphicon glyphicon-pencil'></span></div>";
+				html += "<p class='details'>"
 				for(var h=0; h < this.dias[d].eventos.length; h++){
-					html += "<p class='details'>"+this.dias[d].eventos[h]+"</p>";
+					html += this.dias[d].eventos[h].substring(0, 9)+"...";
+					if(h != this.dias[d].eventos.length-1){
+						html += "\n";
+					}
+
 				}
+				html += "</p>";
 			}
 			else{
-				html += "</div><p class='details'>No hay eventos en esta fecha</p>";
+				html += "<td><div class='day-item'><div style='display: flex'><b>"+this.dias[d].fecha+"</b>";
+				html += "</div><p class='details'>No hay eventos en esta fecha.</p>";
 			}
 
 			if(this.dias[d].monto > 0){
-				html += "<b>-$"+this.dias[d].monto+"</b>"
+				html += "<b>Flujo: </b>-$"+this.dias[d].monto;
 			}
 
 			html += "</div></td>";
@@ -54,7 +61,6 @@ class Mes{
 
 			}
 		}
-		console.log("RENDERIZANDO");
 		return html;
 	}
 }

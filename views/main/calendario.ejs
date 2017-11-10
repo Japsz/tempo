@@ -1,14 +1,79 @@
+<style type="text/css">
+	.item-click:hover{
+		cursor: pointer;
+	}
+	.day-item{
+		height: 100%;
+		padding: 5px;
+		border-radius: 5%;
+		border: 1px solid #0074d9;
+	}
+	.day-item div{
+		position: relative;
+	}
+	.day-item div span{
+		position: absolute;
+		right: 5px;
+	}
+	.day-item:hover{
+		color: white;
+		background-color: #0074d9;
+	}
+	.day-item:hover .details{
+		color: white;
+	}
+	.details{
+		width: 90%;
+	}
+	.calendario td{
+		height: 100%;
+		padding: 5px;
+		margin: 0px;
+	} 
 
-<input type="hidden" id="largo" value="<%=databd.length%>">
-<%for(var h=0; h < databd.length; h++){%>
-	<div id="data<%=h%>">
-		<input type="hidden" class="monto" value="<%=databd[h].monto%>">
-		<input type="hidden" class="detalle" value="<%=databd[h].detalle%>">
-		<input type="hidden" class="fecha_p" value="<%=databd[h].fecha_p%>">
-		<input type="hidden" class="fecha_dia" value="<%=databd[h].fecha_p.getDate()%>">	
+</style>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<p>MUSIC AND PLUGIN IN THE AIR. ¡PONE PLAY PUTO!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="largoEgresos" value="<%=dataEgresos.length%>">
+<%for(var h=0; h < dataEgresos.length; h++){%>
+	<div id="dataEgresos<%=h%>">
+		<input type="hidden" class="monto" value="<%=dataEgresos[h].monto%>">
+		<input type="hidden" class="detalle" value="<%=dataEgresos[h].detalle%>">
+		<input type="hidden" class="fecha_p" value="<%=dataEgresos[h].fecha_p%>">
+		<input type="hidden" class="fecha_dia" value="<%=dataEgresos[h].fecha_p.getDate()%>">	
 	</div>
 <%}%>
 
+<input type="hidden" id="largoIngresos" value="<%=dataIngresos.length%>">
+<%for(var h=0; h < dataIngresos.length; h++){%>
+	<div id="dataIngresos<%=h%>">
+		<input type="hidden" class="monto" value="<%=dataIngresos[h].monto%>">
+		<input type="hidden" class="detalle" value="<%=dataIngresos[h].detalle%>">
+		<input type="hidden" class="fecha_p" value="<%=dataIngresos[h].fecha_p%>">
+		<input type="hidden" class="fecha_dia" value="<%=dataIngresos[h].fecha_p.getDate()%>">	
+	</div>
+<%}%>
 <table>
 
 	<thead class="thead-dark">
@@ -29,15 +94,23 @@
 <script type="text/javascript">
 	
 	var data = [];
-	for(var a=0; a < $("#largo").val(); a++){
+	for(var a=0; a < $("#largoEgresos").val(); a++){
 		data[a] = {
-			monto: $("#data"+a+" .monto").val(),
-			detalle: $("#data"+a+" .detalle").val(),
-			fecha_p:  $("#data"+a+" .fecha_p").val(),
-			fecha_dia: $("#data"+a+" .fecha_dia").val()
+			monto: $("#dataEgresos"+a+" .monto").val(),
+			detalle: $("#dataEgresos"+a+" .detalle").val(),
+			fecha_p:  $("#dataEgresos"+a+" .fecha_p").val(),
+			fecha_dia: $("#dataEgresos"+a+" .fecha_dia").val()
 		};
 	}
-	console.log(data);
+
+	for(var a=0; a < $("#largoIgresos").val(); a++){
+		data[a+data.length] = {
+			monto: $("#dataIngresos"+a+" .monto").val(),
+			detalle: $("#dataIngresos"+a+" .detalle").val(),
+			fecha_p:  $("#dataIngresos"+a+" .fecha_p").val(),
+			fecha_dia: $("#dataIngresos"+a+" .fecha_dia").val()
+		};
+	}
 	var mes;
 	var dias = [];
 	var dias_mes = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -53,13 +126,9 @@
 			}
 	}
 	for(var i=0; i< data.length; i++){
-		console.log(data[i].detalle);
-		console.log(dias[data[i].fecha_dia-1].eventos.length);
 		dias[data[i].fecha_dia-1].eventos[dias[data[i].fecha_dia-1].eventos.length] = data[i].detalle;
 		dias[data[i].fecha_dia-1].monto += parseInt(data[i].monto);
 	}
 	mes = new Mes(dias);
-	console.log(mes);
 	$(".calendario").html(mes.render());
-
 </script>

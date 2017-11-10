@@ -1,0 +1,143 @@
+
+<style type="text/css">
+	/*#owl-demo .item img{
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	.imporDate{
+		margin: 15px;
+		border: solid 1px rgb(0,0,0);
+
+	}
+	.evento-item{
+		display: flex;
+	}
+	.evento-item div{
+		width: 50%;
+	}*/
+	.item{
+		border: solid 1px white;
+		padding: 20px;
+		margin: 15px;
+		color: white;
+	}
+	.item ul li{
+		display: flex;
+	}
+</style>
+<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: blue; padding: 20px; box-shadow: 10px 10px 5px #888888; ">
+
+
+	
+
+<input type="hidden" id="largoEgresos" value="<%=dataEgresos.length%>">
+<%for(var h=0; h < dataEgresos.length; h++){%>
+	<div id="dataEgresos<%=h%>">
+		<input type="hidden" class="monto" value="<%=parseInt(dataEgresos[h].monto)*-1%>">
+		<input type="hidden" class="detalle" value="<%=dataEgresos[h].detalle%>">
+		<input type="hidden" class="fecha_p" value="<%=dataEgresos[h].fecha_p%>">
+		<input type="hidden" class="fecha_dia" value="<%=dataEgresos[h].fecha_p.getDate()%>">
+		<input type="hidden" class="cdc" value="<%=dataEgresos[h].nombre%>">		
+	</div>
+<%}%>
+
+<input type="hidden" id="largoIngresos" value="<%=dataIngresos.length%>">
+<%for(var h=0; h < dataIngresos.length; h++){%>
+	<div id="dataIngresos<%=h%>">
+		<input type="hidden" class="monto" value="<%=parseInt(dataIngresos[h].monto)%>">
+		<input type="hidden" class="detalle" value="<%=dataIngresos[h].detalle%>">
+		<input type="hidden" class="fecha_p" value="<%=dataIngresos[h].fecha_p%>">
+		<input type="hidden" class="fecha_dia" value="<%=dataIngresos[h].fecha_p.getDate()%>">	
+		<input type="hidden" class="cdc" value="<%=dataIngresos[h].nombre%>">
+	</div>
+<%}%>
+<h1 class="page-header">Calendario de flujo:</h1>
+<div class="owl-carousel">
+</div>
+
+
+
+<ul class="list-group container-flujo">
+  		
+
+</ul>
+	
+
+</div>
+
+<script type="text/javascript">
+	
+	var array = new arrayFechas([]);
+
+
+	var data = [];
+	for(var a=0; a < $("#largoEgresos").val(); a++){
+		console.log(a);
+		data[a] = {
+			monto: $("#dataEgresos"+a+" .monto").val(),
+			detalle: $("#dataEgresos"+a+" .detalle").val(),
+			fecha_p:  $("#dataEgresos"+a+" .fecha_p").val(),
+			fecha_dia: $("#dataEgresos"+a+" .fecha_dia").val(),
+			cdc: $("#dataEgresos"+a+" .cdc").val()
+		};
+	}
+
+	for(var a=0; a < $("#largoIngresos").val(); a++){
+		console.log(data.length);
+		data[data.length] = {
+			monto: $("#dataIngresos"+a+" .monto").val(),
+			detalle: $("#dataIngresos"+a+" .detalle").val(),
+			fecha_p:  $("#dataIngresos"+a+" .fecha_p").val(),
+			fecha_dia: $("#dataIngresos"+a+" .fecha_dia").val(),	
+			cdc: $("#dataIngresos"+a+" .cdc").val()
+		};
+		//console.log(data[data.length-1]);
+	}
+	//console.log(data);
+	for(var k=0; k < data.length; k++){
+		var indice = array.fechaExiste(data[k].fecha_p);
+		if(indice == -1){
+			//SI NO EXISTE
+			//SE CREA EL REGISTRO DE LA FECHA Y SE AGREGA EL EVENTO
+			var ind = array.fechas.length;
+			array.fechas[ind] = new Fecha(data[k].fecha_p, new Evento());
+			
+			var datos = {
+				detalle: data[k].detalle,
+				monto: data[k].monto,
+				nombre_cdc: data[k].cdc
+			}
+			array.fechas[ind].eventos.addtoList(datos);
+		}
+		else{//YA EXISTE REGISTRO DE LA FECHA
+			//SE AGREGA EL EVENTO A LA FECHA
+			var datos = {
+				detalle: data[k].detalle,
+				monto: data[k].monto,
+				nombre_cdc: data[k].cdc
+			}
+			array.fechas[indice].eventos.addtoList(datos);
+		
+		}
+	}
+
+
+	console.log(array);
+	$(".owl-carousel").html(array.render());
+	$(".owl-carousel").owlCarousel({
+
+        navigation : true, // Show next and prev buttons
+        slideSpeed : 300,
+        paginationSpeed : 400,
+        singleItem: true
+
+        // "singleItem:true" is a shortcut for:
+        //items : 1 
+        //itemsDesktop : false
+        // itemsDesktopSmall : false,
+        // itemsTablet: false,
+        // itemsMobile : false
+  			});
+	
+</script>
