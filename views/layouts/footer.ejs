@@ -20,9 +20,37 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
+    <!-- Modals -->
+    <div class="modal fade" id="new_cdc" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Crear Centro de costo</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="savecdc">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" name="nombre" class="form-control" required>
+                            <label>Fecha de inicio</label>
+                            <input type="date" name="f_inicio" class="form-control">
+                            <label>Monto de Contrato</label>
+                            <input type="number" name="monto_final" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="send" data-dismiss="modal">Crear</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 </body>
 <script type="text/javascript">
+
     $('.menu-item').on('click', function(e){
         e.preventDefault();
         $.ajax({

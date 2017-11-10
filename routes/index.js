@@ -24,7 +24,7 @@ router.get('/render_section/:id_frame', function(req, res, next){
 	console.log(id);
 	switch(id) {
 		    case 'centro_costos':
-		        res.render('main/cc_view');
+		        res.redirect('/cdc');
 		        break;
 		    case 'def_flujo':
 		        res.render('main/flujo_view');
