@@ -39,7 +39,9 @@ router.post('/save',function(req,res,next){
 router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     var tipo = input.tipo;
-    console.log(input);
+    //console.log(input);
+    //tipo[0] = tipo[0].toLowerCase();
+    console.log(tipo);
     delete input.tipo;
     req.getConnection(function(err,connection){
         if(err) throw err;

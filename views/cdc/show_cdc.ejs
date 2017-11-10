@@ -9,7 +9,8 @@
                 <div class="panel-body" style="display: flex">
                     <div class="panelitem"><p><strong>Fecha de inicio:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_inicio).toLocaleDateString()%></p></div>
                     <div class="panelitem"><p><strong>Fecha de finalización:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_fin).toLocaleDateString()%></p></div>
-                    <div class="panelitem"><p><strong>Monto Final:</strong></p><p style="margin-top: 5px"><%= cdc.monto_total%></p></div>
+                    <%var monto_total = cdc.i_total - cdc.e_total;%>
+                    <div class="panelitem"><p><strong>Monto Final:</strong></p><p style="margin-top: 5px"><%=monto_total%></p></div>
                 </div>
             </div>
         </div>
@@ -31,7 +32,8 @@
                             <input placeholder="Monto" type="number" name="monto" class="form-control" required>
                         </div>
                         <label>Fecha de pago</label>
-                        <input type="date" name="fecha" class="form-control" required>
+                        <input type="date" name="fecha" id="fecha" class="form-control" required>
+                        <input type="hidden" name="fecha_p" id="fecha_p">
 
                         <a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
@@ -87,11 +89,12 @@
                             <input placeholder="Monto"type="number" name="monto" class="form-control" required>
                         </div>
                         <label>Fecha de pago</label>
-                        <input type="date" name="fecha" class="form-control" required>
+                        <input type="date" name="fecha" id="fecha" class="form-control" required>
+                        <input type="hidden" name="fecha_p" id="fecha_p">
 
                         <a class="btn btn-primary sending pull-right" data-tipo="2" style="margin:10px">Agregar</a>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
-                        <input type="hidden" class="hidden" name="tipo" value="Egreso">
+                        <input type="hidden" class="hidden" name="tipo" value="egreso">
 
                     </form>
                 </div>
@@ -142,6 +145,7 @@
     });
     $(".sending").click(function(e){
         var tipo = $(this).data('tipo');
+        $("#payform"+tipo+" #fecha_p").val($("#payform"+tipo+" #fecha").val());
         console.log(tipo);
         var formArray = $("#payform" + tipo).serializeArray();
         var returnArray = {};

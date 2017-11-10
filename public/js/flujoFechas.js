@@ -33,7 +33,7 @@ class arrayFechas{
 			var mes = fecha.substring(4,7);
 			var ano = fecha.substring(11,15);
 			html += "<div class='item imporDate'>\n";
-			html += "<b>Fecha: </b>"+traduceDia(dia_semana)+" "+dia+" de "+traduceMes(mes)+" de "+ano+"\n"; 
+			html += "<h4><b>Fecha: </b>"+traduceDia(dia_semana)+" "+dia+" de "+traduceMes(mes)+" de "+ano+"</h4>\n"; 
 			
 			html += "<table class='table table-inverse'>\n";
 			html += "<thead><tr><th>Detalle</th><th>Monto</th><th>CC</th><th></th></tr></thead>";
@@ -60,7 +60,7 @@ class arrayFechas{
 		    	+			"<span class='input-group-addon' id='basic-addon1'><span class='glyphicon glyphicon-calendar'></span></span>\n"
 				+ 			"<input type='date' class='form-control' id='inputdate"+i+"' placeholder='Ingrese nueva fecha' aria-describedby='basic-addon1'>\n"
 				+		"</div>"
-				+ 	"<button type='button' class='btn btn-primary saveDate' data-idinput='"+i+"' data-cod='"+cod+"'>Guardar</button>\n"
+				+ 	"<button type='button' class='btn btn-primary saveDate' style='margin: 5px;' data-idinput='"+i+"' data-cod='"+cod+"'>Guardar</button>\n"
 				+ "</div></div>\n";
 			html += "</div>\n";
 		}

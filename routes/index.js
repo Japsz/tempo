@@ -102,13 +102,14 @@ router.get('/save_date/:ingOregr/:idflujo/:fecha', function(req, res, next){
 		if(input.ingOregr == 'E'){
 			connection.query("UPDATE egreso SET fecha_p = '"+input.fecha+"' WHERE idegreso = "+input.idflujo, function(err, ingresos){
 				if(err){console.log("Error Selecting : %s", err);}
-				res.send('ok');
+				res.redirect('/render_egresos');
 			});
 		}
 		else if(input.ingOregr == 'I'){
 			connection.query("UPDATE ingreso SET fecha_p = '"+input.fecha+"' WHERE idingreso = "+input.idflujo, function(err, ingresos){
 				if(err){console.log("Error Selecting : %s", err);}
-				res.send('ok');
+				
+				res.redirect('/render_ingresos');
 			});
 		}
 		else{
