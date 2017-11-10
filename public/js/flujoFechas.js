@@ -24,7 +24,7 @@ class arrayFechas{
 		}
 		return -1;
 	}
-	render(){
+	render(cod){
 		var html = "";
 		for(var i=0; i< this.fechas.length; i++){
 			var fecha = this.fechas[i].fecha;
@@ -34,27 +34,34 @@ class arrayFechas{
 			var ano = fecha.substring(11,15);
 			html += "<div class='item imporDate'>\n";
 			html += "<b>Fecha: </b>"+traduceDia(dia_semana)+" "+dia+" de "+traduceMes(mes)+" de "+ano+"\n"; 
-			html += "<ul>\n";
+			
+			html += "<table class='table table-inverse'>\n";
+			html += "<thead><tr><th>Detalle</th><th>Monto</th><th>CC</th><th></th></tr></thead>";
+			html += "<tbody>\n";
 			var eventos = this.fechas[i].eventos.eventos;
 			for(var j=0; j < eventos.length; j++){
-				html += "<li>";
-				html += "<div>"+eventos[j].detalle+"</div>\n";
-				html += "<div>$"+eventos[j].monto+"</div>\n";
-				html += "<div>"+eventos[j].nombre_cdc+"</div>\n";
-				html += "</li>";
+				html += "<tr>";
+				html += "<td>"+eventos[j].detalle+"</td>\n";
+				html += "<td>$"+eventos[j].monto+"</td>\n";
+				html += "<td>"+eventos[j].nombre_cdc+"</td>\n";
+				html += "<td><button type='button' class='btn btn-primary editDate' data-idflujo='"+eventos[j].id+"' data-toggle='collapse' data-target='#collapse"+i+"'><span class='glyphicon glyphicon-pencil'></span></button></td>\n";
+				html += "</tr>";
 			}
-			html += "</ul>\n";
+			html += "</tbody>\n";
+			html += "</table>\n";
 
-			html += "<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse"+i
-			+ "' aria-expanded='false' aria-controls='collapse"+i+"'>Modificar evento</button>\n";
+			//html += "<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse"+i
+			//+ "' aria-expanded='false' aria-controls='collapse"+i+"'>Modificar evento</button>\n";
 			//html += this.renderColapse(html, i);
 			html += "<div class='collapse' id='collapse"+i+"'>\n"
 		 		+	"<div class='card card-body'>\n"
 		  		+		"<label for='date'>Ingrese nueva fecha:</label>\n"
-		    	+		"<div class='input-group' id='date' style='width: 50%'>\n"	
-		    	+			"<span class='input-group-addon' id='basic-addon1'>@</span>\n"
-				+ 			"<input type='date' class='form-control' placeholder='Ingrese nueva fecha' aria-label='Username' aria-describedby='basic-addon1'>\n"
-				+"</div></div></div>\n";
+		    	+		"<div class='input-group' id='date' style='width: 100%'>\n"	
+		    	+			"<span class='input-group-addon' id='basic-addon1'><span class='glyphicon glyphicon-calendar'></span></span>\n"
+				+ 			"<input type='date' class='form-control' id='inputdate"+i+"' placeholder='Ingrese nueva fecha' aria-describedby='basic-addon1'>\n"
+				+		"</div>"
+				+ 	"<button type='button' class='btn btn-primary saveDate' data-idinput='"+i+"' data-cod='"+cod+"'>Guardar</button>\n"
+				+ "</div></div>\n";
 			html += "</div>\n";
 		}
 		return html;

@@ -81,18 +81,39 @@ router.get('/render_flujo', function(req, res, next){
 
 router.get('/render_egresos', function(req, res, next){
 	req.getConnection(function(err, connection){
-		connection.query("SELECT egreso.monto,egreso.fecha_p,egreso.detalle,cdc.nombre,cdc.monto_final FROM egreso LEFT JOIN cdc ON egreso.idcdc=cdc.idcdc WHERE egreso.fecha_p > NOW() ORDER BY egreso.fecha_p", function(err, egresos){
+		connection.query("SELECT egreso.idegreso as id,egreso.monto,egreso.fecha_p,egreso.detalle,cdc.nombre,cdc.monto_final FROM egreso LEFT JOIN cdc ON egreso.idcdc=cdc.idcdc WHERE egreso.fecha_p > NOW() ORDER BY egreso.fecha_p", function(err, egresos){
 			if(err){console.log("Error Selecting : %s", err);}
-			res.render("main/flujoIngresos", {dataEgresos: egresos, number: -1});
+			res.render("main/flujoIngresos", {dataEgresos: egresos, number: -1, titulo:"Egresos:"});
 		});
 	});
 });
 router.get('/render_ingresos', function(req, res, next){
 	req.getConnection(function(err, connection){
-		connection.query("SELECT ingreso.monto,ingreso.fecha_p,ingreso.detalle,cdc.nombre,cdc.monto_final FROM ingreso LEFT JOIN cdc ON ingreso.idcdc=cdc.idcdc WHERE ingreso.fecha_p > NOW() ORDER BY ingreso.fecha_p", function(err, ingresos){
+		connection.query("SELECT ingreso.idingreso as id,ingreso.monto,ingreso.fecha_p,ingreso.detalle,cdc.nombre,cdc.monto_final FROM ingreso LEFT JOIN cdc ON ingreso.idcdc=cdc.idcdc WHERE ingreso.fecha_p > NOW() ORDER BY ingreso.fecha_p", function(err, ingresos){
 			if(err){console.log("Error Selecting : %s", err);}
-			res.render("main/flujoIngresos", {dataEgresos: ingresos, number: 1});
+			res.render("main/flujoIngresos", {dataEgresos: ingresos, number: 1, titulo: "Ingresos:"});
 		});
+	});
+});
+
+router.get('/save_date/:ingOregr/:idflujo/:fecha', function(req, res, next){
+	var input = req.params;
+	req.getConnection(function(err, connection){
+		if(input.ingOregr == 'E'){
+			connection.query("UPDATE egreso SET fecha_p = '"+input.fecha+"' WHERE idegreso = "+input.idflujo, function(err, ingresos){
+				if(err){console.log("Error Selecting : %s", err);}
+				res.send('ok');
+			});
+		}
+		else if(input.ingOregr == 'I'){
+			connection.query("UPDATE ingreso SET fecha_p = '"+input.fecha+"' WHERE idingreso = "+input.idflujo, function(err, ingresos){
+				if(err){console.log("Error Selecting : %s", err);}
+				res.send('ok');
+			});
+		}
+		else{
+			res.send("error");
+		}
 	});
 });
 module.exports = router;
