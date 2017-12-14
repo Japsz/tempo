@@ -25,20 +25,20 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`egreso` (
   `idegreso` INT(11) NOT NULL AUTO_INCREMENT,
-  `idcdc` INT(11) NOT NULL,
+  `idpago` INT(11) NOT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
   `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
   `fecha_p` DATETIME NULL DEFAULT NULL,
   `detalle` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`idegreso`),
-  INDEX `fk_ingreso_cdc_idx` (`idcdc` ASC),
-  CONSTRAINT `fk_ingreso_cdc0`
-    FOREIGN KEY (`idcdc`)
-    REFERENCES `mydb`.`cdc` (`idcdc`)
+  INDEX `fk_egreso_idpago_idx` (`idpago` ASC),
+  CONSTRAINT `fk_egreso_pago`
+    FOREIGN KEY (`idpago`)
+    REFERENCES `mydb`.`pago` (`idpago`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+    ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -47,17 +47,17 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`ingreso` (
   `idingreso` INT(11) NOT NULL AUTO_INCREMENT,
-  `idcdc` INT(11) NOT NULL,
+  `idpago` INT(11) NOT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
   `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
   `fecha_p` DATETIME NULL DEFAULT NULL,
   `detalle` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`idingreso`),
-  INDEX `fk_ingreso_cdc_idx` (`idcdc` ASC),
-  CONSTRAINT `fk_ingreso_cdc`
-    FOREIGN KEY (`idcdc`)
-    REFERENCES `mydb`.`cdc` (`idcdc`)
+  INDEX `fk_ingreso_idpago_idx` (`idpago` ASC),
+  CONSTRAINT `fk_ingreso_pago`
+    FOREIGN KEY (`idpago`)
+    REFERENCES `mydb`.`pago` (`idpago`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
