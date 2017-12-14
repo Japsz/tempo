@@ -1,0 +1,102 @@
+
+
+<div class="owl-carousel">
+						
+
+
+<%if(data.length){
+							for(var i=0; i< data.length; i++){%>
+
+							<div class='item imporDate'>
+								<h4><b>Fecha: </b> <%=data[i].fecha_p%></h4> 
+								
+								<table class='table table-inverse'>
+								<thead>
+									<tr>
+										<th>Detalle</th>
+										<th>Monto</th>
+										<th>CC</th>
+										<th></th>
+									</tr>
+								</thead>
+								
+								<tbody>
+								<%
+								if(data[i].content != null){
+									var cont = data[i].content.split(',');
+									for(var j=0; j< cont.length; j++){
+										var c = cont[j].split('@');
+										if(c[4] == 'Egreso'){%>
+											<tr style="background-color: red; color: white;">
+										
+										<%}
+										else{%>
+											<tr style="background-color: green; color: white;">
+										<%}%>	
+									<td><%= c[0]%></td>
+										<td><%= c[1]%></td>
+										<td><%= c[2]%></td>
+										<td>
+											<button type='button' class='btn btn-primary editDate' data-idpago='<%= c[3]%>' data-toggle='collapse' data-target='#collapse<%= i%>'><span class='glyphicon glyphicon-pencil'></span></button>
+										</td>
+									</tr>
+									<%}}%>
+								</tbody>
+								</table>
+
+									<!--<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse<%= i%>' aria-expanded='false' aria-controls='collapse<%= i%>'>Modificar evento</button>-->
+									<div class='collapse' id='collapse<%= i%>'>
+							 			<div class='card card-body'>
+							  			<label for='date'>Ingrese nueva fecha:</label>
+							    		<div class='input-group' id='date' style='width: 100%'>
+							    		<span class='input-group-addon' id='basic-addon1'><span class='glyphicon glyphicon-calendar'></span></span>
+										<input type='date' class='form-control' placeholder='Ingrese nueva fecha' aria-describedby='basic-addon1' id="inputdate<%=i%>">
+											</div>
+										<button type='button' class='btn btn-primary saveDate' data-idinput='<%= i%>' style='margin: 5px;'>Guardar</button>
+										</div>
+									</div>
+						</div>
+						<%}}%>
+</div>
+
+<script type="text/javascript">
+	$(".owl-carousel").owlCarousel({
+				        navigation : true, // Show next and prev buttons
+				        slideSpeed : 300,
+				        paginationSpeed : 400,
+				        singleItem: true,
+
+				        // "singleItem:true" is a shortcut for:
+				        items : 2 
+				        //itemsDesktop : false
+				        // itemsDesktopSmall : false,
+				        // itemsTablet: false,
+				        // itemsMobile : false
+				});
+
+
+
+		var idpago;
+
+	$(".editDate").on('click', function(e){
+		e.preventDefault();
+		idpago = $(this).data('idpago');
+	});
+
+
+	$(".saveDate").on('click', function(e){
+		e.preventDefault();
+		var inputdate =  $("#inputdate"+$(this).data('idinput')).val();
+		console.log($(this).val());
+		$.ajax({
+			type: 'GET',
+			url: '/save_date/'+idpago+'/'+inputdate,
+			success: function(data){
+                $(".main").html(data);
+			}
+		});
+	});
+
+</script>
+
+

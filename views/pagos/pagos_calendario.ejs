@@ -1,0 +1,47 @@
+<style type="text/css">
+	.item{
+		border: solid 1px black;
+		padding: 20px;
+		margin: 15px;
+		color: black;
+		background-color: white;
+		border-radius: 2%;
+		box-shadow: 5px 5px 5px rgb(10,10,10);
+	}
+</style>
+<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888; ">
+
+
+<h1 class="page-header title"><%=titulo%></h1>
+<div class="main" style="width: 100%">
+</div>
+
+
+
+<ul class="list-group container-flujo">
+  		
+
+</ul>
+	
+
+</div>
+
+<script type="text/javascript">
+	
+
+	$.ajax({
+			type: 'GET',
+			url: '/pagos/render_carousel', 
+			success: function(data){
+				$(".main").html(data);
+				
+			}
+		});
+
+
+
+
+	
+	
+
+</script>

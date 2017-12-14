@@ -39,4 +39,17 @@ router.get('/render_ingresos', function(req, res, next){
     });
 });
 
+
+router.get('/render_carousel', function(req, res, next){
+    req.getConnection(function(err, connection){
+        connection.query("SELECT pago.fecha_p, GROUP_CONCAT(pago.detalle,'@', pago.monto, '@', cdc.nombre,'@',pago.idpago,'@', pago.tipo) as content FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc GROUP BY pago.fecha_p", function(err, pagos){
+            if(err){console.log("Error Selecting : %s", err);}
+            res.render("pagos/carousel_calendario", {data: pagos});
+        });
+    });
+});
+
+
+
+
 module.exports = router;

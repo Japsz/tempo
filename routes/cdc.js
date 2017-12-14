@@ -41,10 +41,12 @@ router.post('/save_pay',function(req,res,next){
     var tipo = input.tipo;
     console.log(input);
     input.fecha_p = input.fecha;
-    delete input.tipo;
+    //delete input.tipo;
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("INSERT INTO " + tipo + " SET ?",input,function(err,rows){
+        //connection.query("INSERT INTO " + tipo + " SET ?",input,function(err,rows){
+        connection.query("INSERT INTO pago SET ?",input,function(err,rows){
+         
             if(err) throw err;
             res.redirect('/cdc/show/' + input.idcdc);
         });
