@@ -26,11 +26,9 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `mydb`.`egreso` (
   `idegreso` INT(11) NOT NULL AUTO_INCREMENT,
   `idcdc` INT(11) NOT NULL,
-  `idpago` INT(11) NOT NULL,
+  `idpago` INT(11) NULL DEFAULT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
-  `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
-  `fecha_p` DATETIME NULL DEFAULT NULL,
   `detalle` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`idegreso`),
   INDEX `fk_egreso_idpago_idx` (`idpago` ASC),
@@ -54,12 +52,10 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`ingreso` (
   `idingreso` INT(11) NOT NULL AUTO_INCREMENT,
-  `idpago` INT(11) NULL,
-  `idcdc` INT(11) NULL,
+  `idpago` INT(11) NULL DEFAULT NULL,
+  `idcdc` INT(11) NOT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
-  `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
-  `fecha_p` DATETIME NULL DEFAULT NULL,
   `detalle` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`idingreso`),
     INDEX `fk_ingreso_idcdc_idx` (`idcdc` ASC),
