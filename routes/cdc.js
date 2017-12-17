@@ -39,6 +39,7 @@ router.post('/save',function(req,res,next){
 });
 router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
+    input.tipo = input.tipo.toLowerCase();
     var tipo = input.tipo;
     
     req.getConnection(function(err,connection){

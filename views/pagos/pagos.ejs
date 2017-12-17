@@ -19,15 +19,23 @@
 				<select name="idcdc" class="form-control">
 
 					<% if(cdc.length){
-						for(var i = 0;i<cdc.length;i++){%>
+						for(var i=0 ; i< cdc.length ; i++){%>
 					<option value="<%= cdc[i].idcdc%>"><%=cdc[i].nombre%></option>
 					<%}
 					}%>
 				</select>
-
+				<%if(titulo == 'Pago'){%>
+					<label>Tipo de pago</label>
+					<select name="tipo" class="form-control">
+						<option value="ingreso">Ingreso</option>
+						<option value="egreso">Egreso</option>
+					</select>		
+				<%}
+				else{%>
+					<input type="hidden" class="hidden" name="tipo" value="<%= titulo%>">
+				<%}%>
 				<a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
 
-				<input type="hidden" class="hidden" name="tipo" value="<%= titulo%>">
 			</form>
 		</div>
 		<table class="table table-striped">
@@ -78,7 +86,7 @@
 			success: function(data){
 			    $("#page-container").html(data);
 			}
-		})
+		});
 	});
 	$(".vercdc").click(function(e){
 	    $.ajax({
