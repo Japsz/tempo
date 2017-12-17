@@ -1,4 +1,10 @@
-<div class="container">
+<% var key = new Date().toLocaleString();
+    key = key.replace(/\:/g,"");
+    key = key.replace(/\//g,"");
+    key = key.replace(/\ /g,"");
+    key = key.replace(/\-/g,"");
+%>
+<div class="container" id="key">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-primary">
@@ -28,13 +34,10 @@
                             <input placeholder="Descripción" type="text" name="detalle" class="form-control" required>
                         </div>
                         <div class="form-inline">
-                            <input placeholder="N° Factura" type="text" name="n_factura" class="form-control" required>
+                            <label>Fecha de pago</label>
+                            <input type="date" name="fecha" id="fecha" class="form-control" required>
                             <input placeholder="Monto" type="number" name="monto" class="form-control" required>
                         </div>
-                        <label>Fecha de pago</label>
-                        <input type="date" name="fecha" id="fecha" class="form-control" required>
-                        <input type="hidden" name="fecha_p" id="fecha_p">
-
                         <a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
                         <input type="hidden" class="hidden" name="tipo" value="ingreso">
@@ -79,17 +82,15 @@
                 </div>
                 <div class="panel-body collapse" id="newmov2">
                     <form id="payform2">
-                        <h3>Nuevo:</h3>
+                            <h3>Nuevo:</h3>
                         <div class="form-group">
                             <input placeholder="Descripción" type="text" name="detalle" class="form-control" required>
                         </div>
                         <div class="form-inline">
-                            <input placeholder="N° Factura" type="text" name="n_factura" class="form-control" required>
+                            <label>Fecha de pago</label>
+                            <input type="date" name="fecha" id="fecha" class="form-control" required>
                             <input placeholder="Monto"type="number" name="monto" class="form-control" required>
                         </div>
-                        <label>Fecha de pago</label>
-                        <input type="date" name="fecha" id="fecha" class="form-control" required>
-                        <input type="hidden" name="fecha_p" id="fecha_p">
 
                         <a class="btn btn-primary sending pull-right" data-tipo="2" style="margin:10px">Agregar</a>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
@@ -132,7 +133,7 @@
 </div>
 <script type="text/javascript">
     var esegreso
-    $(".pay").click(function(){
+    $("#<%= key%> .pay").click(function(){
         esegreso = $(this).data('is_e');
         if(parseInt(esegreso))
             $("#new_mov .modal-title").html("Registrar Egreso");
@@ -141,7 +142,7 @@
 
         $("#sendpay").val($(this).data('is_e'));
     });
-    $(".sending").click(function(e){
+    $("#<%= key%> .sending").click(function(e){
         var tipo = $(this).data('tipo');
         $("#payform"+tipo+" #fecha_p").val($("#payform"+tipo+" #fecha").val());
         console.log(tipo);

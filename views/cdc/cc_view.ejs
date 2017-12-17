@@ -1,4 +1,10 @@
-<div class="col-md-10 col-md-offset-1">
+<% var key = new Date().toLocaleString();
+key = key.replace(/\:/g,"");
+key = key.replace(/\//g,"");
+key = key.replace(/\ /g,"");
+key = key.replace(/\-/g,"");
+%>
+<div class="col-md-10 col-md-offset-1" id="<%= key%>">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h1 class="page-header">Centros de Costo			<a class="btn btn-success pull-right" data-toggle="modal" href="#new_cdc"> + Crear</a></h1>
@@ -9,6 +15,7 @@
 				<th>Nombre</th>
 				<th>Fecha de inicio</th>
 				<th>Egresos totales</th>
+				<th>Ingresos totales</th>
 				<th></th>
 			</tr>
 			</thead>
@@ -20,6 +27,7 @@
 				<td><%= data[i].nombre%></td>
 				<td><%= new Date(data[i].f_inicio).toLocaleDateString()%></td>
 				<td><%= data[i].e_total%></td>
+				<td><%= data[i].i_total%></td>
 				<td><a class="btn btn-info vercdc" data-idcdc="<%= data[i].idcdc%>"><i class="fa fa-eye"></i>Ver</a></td>
 			</tr>
 			<% }
@@ -28,25 +36,11 @@
 			</tbody>
 		</table>
 	</div>
+
 </div>
 
 <script type="text/javascript">
-	$("#send").click(function(e){
-        var formArray = $("#savecdc").serializeArray();
-        var returnArray = {};
-        for (var i = 0; i < formArray.length; i++){
-            returnArray[formArray[i]['name']] = formArray[i]['value'];
-        }
-        $.ajax({
-			url: "/cdc/save",
-			type: 'POST',
-			data: returnArray,
-			success: function(data){
-			    $("#page-container").html(data);
-			}
-		})
-	});
-	$(".vercdc").click(function(e){
+	$("#<%= key%> .vercdc").click(function(e){
 	    $.ajax({
 			url:"/cdc/show/" + $(this).data('idcdc'),
 			success: function(data){

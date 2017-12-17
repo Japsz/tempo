@@ -19,7 +19,8 @@ router.use(
 router.get('/',function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc GROUP BY cdc.idcdc",function(err,rows){
+        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total,SUM(ingreso.monto) as i_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc" +
+            " LEFT JOIN ingreso ON ingreso.idcdc = cdc.idcdc GROUP BY cdc.idcdc",function(err,rows){
             if(err) throw err;
             res.render('cdc/cc_view',{data: rows});
         });
@@ -39,8 +40,7 @@ router.post('/save',function(req,res,next){
 router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     var tipo = input.tipo;
-    console.log(input);
-    input.fecha_p = input.fecha;
+    
     req.getConnection(function(err,connection){
         if(err) throw err;
         connection.query("INSERT INTO pago SET ?", input, function(err, pago){
@@ -54,7 +54,6 @@ router.post('/save_pay',function(req,res,next){
         });
         
     });
-
 });
 router.get("/show/:idcdc",function(req,res,next){
     req.getConnection(function(err,connection){
