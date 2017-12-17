@@ -40,9 +40,22 @@ router.get('/render_ingresos', function(req, res, next){
 });
 
 
+router.get('/render_pagos', function(req, res, next){
+    req.getConnection(function(err, connection){
+        connection.query("SELECT pago.*, cdc.nombre FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc ORDER BY pago.fecha DESC", function(err, pagos){
+            if(err){console.log("Error Selecting : %s", err);}
+            connection.query("SELECT idcdc,nombre FROM cdc",function(err,cdc){
+                if(err){console.log("Error Selecting : %s", err);}
+                 res.render("pagos/pagos", {data: pagos, titulo: "Pago",cdc:cdc});
+            });
+        }); 
+    });
+});
+
+
 router.get('/render_carousel', function(req, res, next){
     req.getConnection(function(err, connection){
-        connection.query("SELECT pago.fecha_p, GROUP_CONCAT(pago.detalle,'@', pago.monto, '@', cdc.nombre,'@',pago.idpago,'@', pago.tipo) as content FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc GROUP BY pago.fecha_p", function(err, pagos){
+        connection.query("SELECT pago.fecha_p, GROUP_CONCAT(pago.detalle,'@', pago.monto, '@', cdc.nombre,'@',pago.idpago,'@', pago.tipo) as content FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc WHERE pago.fecha_p > NOW() GROUP BY pago.fecha_p", function(err, pagos){
             if(err){console.log("Error Selecting : %s", err);}
             res.render("pagos/carousel_calendario", {data: pagos});
         });

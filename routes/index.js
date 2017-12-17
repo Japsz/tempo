@@ -32,6 +32,9 @@ router.get('/render_section/:id_frame', function(req, res, next){
 		    case 'ingresos':
 				res.redirect('/render_ingresos');
 		        break;
+			case 'todos':
+				res.redirect('/pagos/render_pagos');
+				break;
 			case 'todos_ing':
 				res.redirect('/pagos/render_ingresos');
 				break;
