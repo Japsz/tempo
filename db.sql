@@ -25,7 +25,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`egreso` (
   `idegreso` INT(11) NOT NULL AUTO_INCREMENT,
-  `idpago` INT(11) NOT NULL,
+  `idpago` INT(11) NULL,
+  `idcdc` INT(11) NOT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
   `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
@@ -47,7 +48,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`ingreso` (
   `idingreso` INT(11) NOT NULL AUTO_INCREMENT,
-  `idpago` INT(11) NOT NULL,
+  `idpago` INT(11) NULL,
+  `idcdc` INT(11) NOT NULL,
   `monto` INT(11) NULL DEFAULT NULL,
   `n_factura` VARCHAR(45) NULL DEFAULT NULL,
   `fecha` DATETIME NULL DEFAULT NULL,
