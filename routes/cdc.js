@@ -29,7 +29,7 @@ router.get('/',function(req,res,next){
 router.post('/save',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     console.log(input);
-    req.getConnection(function(err,connection){
+    eq.getConnection(function(err,connection){
         if(err) throw err;
         connection.query("INSERT INTO cdc SET ?",input,function(err,rows){
             if(err) throw err;
@@ -41,18 +41,34 @@ router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     input.tipo = input.tipo.toLowerCase();
     var tipo = input.tipo;
-    
+    console.log(input);
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("INSERT INTO pago SET ?", input, function(err, pago){
-            if(err){console.log("Error Selecting : %s", err);}
-            delete input.tipo;
-            input.idpago = pago.insertId;
-            connection.query("INSERT INTO " + tipo + " SET ?",input,function(err,rows){
-                if(err) throw err;
-                res.redirect('/cdc/show/' + input.idcdc);
+        if(input.fac == "1"){
+            delete input.fac;
+            input.fecha_p = input.fecha;
+            connection.query("INSERT INTO pago SET ?", input, function(err, pago){
+                if(err){console.log("Error Selecting : %s", err);}
+                delete input.tipo;
+                delete input.n_factura;
+                delete input.fecha_p;
+                input.idpago = pago.insertId;
+                connection.query("INSERT INTO " + tipo + " SET ?",input,function(err,rows){
+                    if(err) throw err;
+                    res.redirect('/cdc/show/' + input.idcdc);
+                });
             });
-        });
+        }
+        else{
+                delete input.fac;
+                delete input.tipo;
+                delete input.n_factura;
+                input.idpago = null;
+                connection.query("INSERT INTO " + tipo + " SET ?",input,function(err,rows){
+                    if(err) throw err;
+                    res.redirect('/cdc/show/' + input.idcdc);
+                });  
+        }
         
     });
 });
