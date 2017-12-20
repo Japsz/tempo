@@ -74,7 +74,7 @@ router.post('/save_pay',function(req,res,next){
 router.get("/mycdc",function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total,SUM(ingreso.monto) as i_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc WHERE cdc.idcdc = 1 GROUP BY cdc.idcdc",function(err,cdc){
+        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc WHERE cdc.idcdc = 1 GROUP BY cdc.idcdc",function(err,cdc){
             if(err) throw err;
             connection.query("SELECT * FROM egreso WHERE idcdc = 1",function(err,egresos){
                 if(err) throw err;
@@ -83,6 +83,7 @@ router.get("/mycdc",function(req,res,next){
         });
     });
 });
+
 router.get("/show/:idcdc",function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;

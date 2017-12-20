@@ -51,6 +51,65 @@ router.get('/render_pagos', function(req, res, next){
         }); 
     });
 });
+router.get('/pagoscsv_forged', function(req, res, next){
+        var fs = require('fs')
+        var parse = require('csv-parse');
+
+        var parser = parse(
+            function(err,rows){
+                if(err) throw err;
+                var aux = [];
+                var mat_list = [];
+                var ing_list = [];
+                var egreso_list = [];
+                var fecha,monto,tipo;
+                for(var i=1;i<rows.length;i++){
+                    if(rows[i][7] == "C"){
+                        tipo = "egreso";
+                    } else if( rows[i][7] == "A"){
+                        tipo = "ingreso";
+                    }
+                    aux.push(rows[i][7]);
+                    monto = Math.abs(parseInt(rows[i][0]));
+                    fecha = new Date(rows[i][3]);
+                    console.log(fecha);
+                    mat_list.push([rows[i][1],fecha,fecha,tipo,monto,1]);
+                }
+                req.getConnection(function(err,connection){
+                    if(err) throw err;
+                    connection.query("INSERT INTO pago (`detalle`,`fecha`,`fecha_p`,`tipo`,`monto`,`idcdc`) VALUES ?",[mat_list],function(err,rows){
+                        if(err) {
+                            throw err;
+                        }
+                        console.log(rows.insertId + 1);
+                        console.log("aff: " + rows.affectedRows);
+                        console.log("f_len: " + aux.length);
+                        for(var j = 0;j<aux.length;j++){
+                            if(aux[j] == "C"){
+                                egreso_list.push([rows.insertId + j,1,mat_list[j][0],mat_list[j][1],"pagado",mat_list[j][4]]);
+                            } else if(aux[j] == "A"){
+                                ing_list.push([rows.insertId + j,1,mat_list[j][0],mat_list[j][1],"pagado",mat_list[j][4]]);
+                            }
+                        }
+                        connection.query("INSERT INTO ingreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[egreso_list],function(err,forgeds){
+                            if(err) throw err;
+                            connection.query("INSERT INTO egreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[ing_list],function(err,forgeds){
+                                if(err) throw err;
+                                res.redirect('/');
+                            });
+                        });
+                    })
+                });
+            });
+        var input = fs.createReadStream('cartola.csv');
+        input.pipe(parser);
+
+        /*input.pipe(parse(function(err, rows){
+            if(err) throw err;
+            console.log(rows);
+        }));*/
+
+});
 
 
 router.get('/render_carousel', function(req, res, next){
