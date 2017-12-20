@@ -41,7 +41,6 @@ router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     input.tipo = input.tipo.toLowerCase();
     var tipo = input.tipo;
-    
     req.getConnection(function(err,connection){
         if(err) throw err;
         connection.query("INSERT INTO pago SET ?", input, function(err, pago){
@@ -54,6 +53,18 @@ router.post('/save_pay',function(req,res,next){
             });
         });
         
+    });
+});
+router.get("/mycdc",function(req,res,next){
+    req.getConnection(function(err,connection){
+        if(err) throw err;
+        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total,SUM(ingreso.monto) as i_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc WHERE cdc.idcdc = 1 GROUP BY cdc.idcdc",function(err,cdc){
+            if(err) throw err;
+            connection.query("SELECT * FROM egreso WHERE idcdc = 1",function(err,egresos){
+                if(err) throw err;
+                res.render('cdc/mycdc',{cdc: cdc[0],egreso:egresos});
+            });
+        });
     });
 });
 router.get("/show/:idcdc",function(req,res,next){

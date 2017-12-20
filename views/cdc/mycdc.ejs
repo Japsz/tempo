@@ -1,0 +1,102 @@
+<% var key = new Date().toLocaleString();
+    key = key.replace(/\:/g,"");
+    key = key.replace(/\//g,"");
+    key = key.replace(/\ /g,"");
+    key = key.replace(/\-/g,"");
+%>
+<div class="container" id="key">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <input type="hidden" id="thiscdc" value="<%= cdc.idcdc%>">
+                    <h1><%= cdc.nombre%> <a class="btn btn-warning"><i class="fa fa-wrench"></i>Modificar</a></h1>
+                </div>
+                <div class="panel-body" style="display: flex">
+                    <div class="panelitem"><p><strong>Saldo actual: </strong></p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h1>Gastos <a class="btn btn-success pull-right pay" data-toggle="collapse" href="#newmov2" data-is_e="1"> + Añadir</a></h1>
+                </div>
+                <div class="panel-body collapse" id="newmov2">
+                    <form class="payform">
+                        <h3>Registrar Gasto:</h3>
+                        <div class="form-group">
+                            <input placeholder="Descripción" maxlength="100" type="text" name="detalle" class="form-control" required>
+                        </div>
+                        <div class="form-inline">
+                            <label>Manera de pago</label>
+                            <select name=""
+                            <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+                        </div>
+
+                        <button class="btn btn-primary sending pull-right" style="margin:10px">Agregar</button>
+                        <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
+                        <input type="hidden" class="hidden" name="tipo" value="egreso">
+
+                    </form>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <td>Detalle</td>
+                        <td>N° Factura</td>
+                        <td>Fecha</td>
+                        <td>Monto</td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% if(egreso.length){
+                    for(var i = 0;i<egreso.length;i++){
+                    %>
+                    <tr>
+                        <td><%= egreso[i].detalle%></td>
+                        <td><%= egreso[i].n_factura%></td>
+                        <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
+                        <td><%= egreso[i].monto%></td>
+                        <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
+                    </tr>
+                    <% }
+                    } else {%>
+                    <tr>
+                        <td>No hay facturas</td>
+                    </tr>
+                    <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("form.payform").submit(function(e){
+        e.preventDefault();
+        var formArray = $(this).serializeArray();
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++){
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        $.ajax({
+            url: "/cdc/save_pay",
+            type: 'POST',
+            data: returnArray,
+            success: function(data){
+                $("#page-container").html(data);
+            }
+        })
+    });
+
+</script>
+<style type="text/css">
+    .panelitem{
+        width:33%;
+        text-align: center;
+    }
+</style>
