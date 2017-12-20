@@ -34,8 +34,12 @@
 				else{%>
 					<input type="hidden" class="hidden" name="tipo" value="<%= titulo%>">
 				<%}%>
-				<a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
-
+				<div style="padding: 10px">
+					<label style="margin-right: 10px">Facturado</label>
+					<label class="radio-inline"><input type="radio" name="fac" value="1">Si</label>
+					<label class="radio-inline"><input type="radio" name="fac" value="0">No</label>
+					<a class="btn btn-primary sending pull-right" data-tipo="" style="margin:10px">Agregar</a>
+				</div>
 			</form>
 		</div>
 		<table class="table table-striped">
