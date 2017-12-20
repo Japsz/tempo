@@ -113,17 +113,6 @@ router.get("/mycdc",function(req,res,next){
     });
 });
 
-
-router.get("/mycdc_gastos",function(req,res,next){
-    req.getConnection(function(err,connection){
-        if(err) throw err;
-        connection.query("SELECT * FROM egreso WHERE idcdc = 1",function(err,egresos){
-                if(err) throw err;
-                res.render('cdc/mycdc_gastos',{egreso:egresos});
-            });
-    });
-});
-
 router.get("/show/:idcdc",function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
