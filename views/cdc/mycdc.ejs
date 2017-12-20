@@ -13,7 +13,7 @@
                     <h1><%= cdc.nombre%> <a class="btn btn-warning"><i class="fa fa-wrench"></i>Modificar</a></h1>
                 </div>
                 <div class="panel-body" style="display: flex">
-                    <div class="panelitem"><p><strong>Saldo actual: </strong></p></div>
+                    <div class="panelitem"><p><strong>Saldo actual: </strong>$<%= cdc.monto_final%></p></div>
                 </div>
             </div>
         </div>
@@ -32,17 +32,21 @@
                         </div>
                         <div class="form-inline">
                             <label>Manera de pago</label>
-                            <select name=""
+                            <select name="metodopago" class="form-control">
+                                <option value="anual">Anual</option>
+                                <option value="mensual">Mensual</option>
+                                <option value="unico">Unico</option>
+                            </select>
                             <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+                            <input placeholder="Fecha" type="date" name="fecha" class="form-control">
                         </div>
-
                         <button class="btn btn-primary sending pull-right" style="margin:10px">Agregar</button>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
                         <input type="hidden" class="hidden" name="tipo" value="egreso">
 
                     </form>
                 </div>
-                <table class="table table-striped">
+                <table class="table table-striped table-gastos">
                     <thead>
                     <tr>
                         <td>Detalle</td>
@@ -54,13 +58,13 @@
                     </thead>
                     <tbody>
                     <% if(egreso.length){
-                    for(var i = 0;i<egreso.length;i++){
+                    for(var i = 0;i< egreso.length;i++){
                     %>
                     <tr>
                         <td><%= egreso[i].detalle%></td>
                         <td><%= egreso[i].n_factura%></td>
                         <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
-                        <td><%= egreso[i].monto%></td>
+                        <td>$<%= egreso[i].monto%></td>
                         <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
                     </tr>
                     <% }
@@ -88,7 +92,7 @@
             type: 'POST',
             data: returnArray,
             success: function(data){
-                $("#page-container").html(data);
+                $(".table-gastos").html(data);
             }
         })
     });
