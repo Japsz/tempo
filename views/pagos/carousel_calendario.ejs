@@ -1,62 +1,47 @@
 
 
 <div class="owl-carousel">
-						
-
-
-<%if(data.length){
-							for(var i=0; i< data.length; i++){%>
-
-							<div class='item imporDate'>
-								<h4><b>Fecha: </b> <%=data[i].fecha_p%></h4> 
-								
-								<table class='table table-inverse'>
-								<thead>
-									<tr>
-										<th>Detalle</th>
-										<th>Monto</th>
-										<th>CC</th>
-										<th></th>
-									</tr>
-								</thead>
-								
-								<tbody>
-								<%
-								if(data[i].content != null){
-									var cont = data[i].content.split(',');
-									for(var j=0; j< cont.length; j++){
-										var c = cont[j].split('@');
-										if(c[4] == 'egreso'){%>
-											<tr style="background-color: red; color: white;">
-										
-										<%}
-										else{%>
-											<tr style="background-color: green; color: white;">
-										<%}%>	
-									<td><%= c[0]%></td>
-										<td><%= c[1]%></td>
-										<td><%= c[2]%></td>
-										<td>
-											<button type='button' class='btn btn-primary editDate' data-idpago='<%= c[3]%>' data-toggle='collapse' data-target='#collapse<%= i%>'><span class='glyphicon glyphicon-pencil'></span></button>
-										</td>
-									</tr>
-									<%}}%>
-								</tbody>
-								</table>
-
-									<!--<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse<%= i%>' aria-expanded='false' aria-controls='collapse<%= i%>'>Modificar evento</button>-->
-									<div class='collapse' id='collapse<%= i%>'>
-							 			<div class='card card-body'>
-							  			<label for='date'>Ingrese nueva fecha:</label>
-							    		<div class='input-group' id='date' style='width: 100%'>
-							    		<span class='input-group-addon' id='basic-addon1'><span class='glyphicon glyphicon-calendar'></span></span>
-										<input type='date' class='form-control' placeholder='Ingrese nueva fecha' aria-describedby='basic-addon1' id="inputdate<%=i%>">
-											</div>
-										<button type='button' class='btn btn-primary saveDate' data-idinput='<%= i%>' style='margin: 5px;'>Guardar</button>
-										</div>
-									</div>
+<%var gasPrice = new Intl.NumberFormat('es-CL',
+		{ style: 'currency', currency: 'CLP',
+			minimumFractionDigits: 0 });
+if(data.length){
+	var ahora = new Date(data[0].fecha).toLocaleDateString();
+	var cordion = 0;%>
+	<div class='item imporDate'>
+		<h4><b>Fecha:<%= ahora%> </b> </h4>
+		<div class="panel-group" id="accordion0" role="tablist" aria-multiselectable="true">
+		<% for(var i=0; i< data.length; i++){
+			if(ahora != new Date(data[i].fecha).toLocaleDateString()){
+				cordion +=1;
+				ahora = new Date(data[i].fecha).toLocaleDateString();%>
+		</div>
+	</div>
+	<div class='item imporDate'>
+		<h4><b>Fecha:<%= ahora%> </b> </h4>
+		<div class="panel-group" id="accordion<%= cordion%>" role="tablist" aria-multiselectable="true">
+			<%}%>
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="heading<%= data[i].idpago%>">
+					<h3 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#collapse<%= data[i].idpago%>" aria-expanded="true" aria-controls="collapseOne">
+							<strong><%=data[i].detalle%></strong><small class="pull-right"><%= gasPrice.format(data[i].monto)%></small>
+						</a>
+					</h3>
+				</div>
+				<div class='panel-collapse collapse' id='collapse<%= data[i].idpago%>' role="tabpanel" aria-labelledby="heading<%=data[i].idpago%>">
+					<div class='form-inline'>
+						<div class='input-group'>
+							<span class='input-group-addon' id='basic-addon<%= data[i].idpago%>'><span class='glyphicon glyphicon-calendar'></span></span>
+							<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date( data[i].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' aria-describedby='basic-addon<%= data[i].idpago%>' id="inputdate<%=i%>">
 						</div>
-						<%}}%>
+						<button type='button' class='btn btn-primary saveDate' data-idinput='<%= i%>' style='margin: 5px;'>Guardar</button>
+					</div>
+				</div>
+			</div>
+		<%}%>
+		</div>
+	</div>									<!--<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse<%= i%>' aria-expanded='false' aria-controls='collapse<%= i%>'>Modificar evento</button>-->
+<%}%>
 </div>
 
 <script type="text/javascript">
