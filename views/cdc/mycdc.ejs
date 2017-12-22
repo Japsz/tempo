@@ -32,13 +32,32 @@
                         </div>
                         <div class="form-inline">
                             <label>Manera de pago</label>
-                            <select name="metodopago" class="form-control">
+                            <select name="metodopago" class="form-control" onchange="renderForm(this)">
                                 <option value="anual">Anual</option>
                                 <option value="mensual">Mensual</option>
                                 <option value="unico">Unico</option>
                             </select>
-                            <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
-                            <input placeholder="Fecha" type="date" name="fecha" class="form-control">
+                            <div class="form_render" id="form_unico" style="display: block; margin-top: 10px;">
+                                <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+                                <label for="fecha">Ingrese fecha:</label>
+                                <input placeholder="Fecha" type="date" name="fecha" class="form-control">
+                            </div>
+
+                            <div class="form_render" id="form_mensual" style="display: none; margin-top: 10px;">
+                                <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+                                <label for="fecha">Ingrese fecha 1era cuota:</label>
+                                <input type="date" name="fecha" class="form-control">
+                                <label for="fecha_fin">Ingrese fecha ultima cuota:</label>
+                                <input type="date" name="fecha_fin" class="form-control">
+                            </div>
+
+                            <div class="form_render" id="form_anual" style="display: none; margin-top: 10px;">
+                                <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+                                <label for="fecha">Ingrese fecha:</label>
+                                <input placeholder="Fecha primera cuota" type="date" name="fecha" class="form-control">
+                                <label for="fecha_fin">Ingrese fecha ultima cuota:</label>
+                                <input type="date" name="fecha_fin" class="form-control">
+                            </div>
                         </div>
                         <button class="btn btn-primary sending pull-right" style="margin:10px">Agregar</button>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
@@ -96,6 +115,11 @@
             }
         })
     });
+    function renderForm(select){
+        var option = $(select).val();
+        $(".form_render").css('display', 'none');
+        $("#form_"+option).css('display', 'block');
+    }
 
 </script>
 <style type="text/css">
