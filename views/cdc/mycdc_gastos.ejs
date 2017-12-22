@@ -1,0 +1,27 @@
+<thead>
+                    <tr>
+                        <td>Detalle</td>
+                        <td>N° Factura</td>
+                        <td>Fecha</td>
+                        <td>Monto</td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% if(egreso.length){
+                    for(var i = 0;i< egreso.length;i++){
+                    %>
+                    <tr>
+                        <td><%= egreso[i].detalle%></td>
+                        <td><%= egreso[i].n_factura%></td>
+                        <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
+                        <td><%= egreso[i].monto%></td>
+                        <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
+                    </tr>
+                    <% }
+                    } else {%>
+                    <tr>
+                        <td>No hay facturas</td>
+                    </tr>
+                    <%}%>
+                    </tbody>

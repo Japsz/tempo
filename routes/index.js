@@ -45,7 +45,11 @@ router.get('/render_section/:id_frame', function(req, res, next){
 		    	res.redirect('/render_egresos');
 		        break; 
 		    case 'flujo':
-		    	res.redirect('/render_pagos');       
+		    	res.redirect('/render_pagos');
+		    	break;
+		    case 'gastos':
+		    	res.redirect('/cdc/mycdc');	       
+		    	break;
 		    default:
 		        res.render('main/cc_view');
 	}
