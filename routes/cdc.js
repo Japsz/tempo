@@ -117,6 +117,7 @@ router.post('/save_pay',function(req,res,next){
                 });
             }
             else{
+                    var tipo = input.tipo.toLowerCase();
                     delete input.fac;
                     delete input.tipo;
                     delete input.n_factura;
