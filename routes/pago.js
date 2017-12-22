@@ -70,8 +70,9 @@ router.get('/pagoscsv_forged', function(req, res, next){
                         tipo = "ingreso";
                     }
                     aux.push(rows[i][7]);
-                    monto = Math.abs(parseInt(rows[i][0]));
-                    fecha = new Date(rows[i][3]);
+                    monto = Math.abs(parseInt(rows[i][0].replace(/\./g,"")));
+                    fecha = rows[i][3].split("/");
+                    fecha = new Date(fecha[2],fecha[1],fecha[0]);
                     console.log(fecha);
                     mat_list.push([rows[i][1],fecha,fecha,tipo,monto,1]);
                 }
@@ -91,9 +92,9 @@ router.get('/pagoscsv_forged', function(req, res, next){
                                 ing_list.push([rows.insertId + j,1,mat_list[j][0],mat_list[j][1],"pagado",mat_list[j][4]]);
                             }
                         }
-                        connection.query("INSERT INTO ingreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[egreso_list],function(err,forgeds){
+                        connection.query("INSERT INTO ingreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[ing_list],function(err,forgeds){
                             if(err) throw err;
-                            connection.query("INSERT INTO egreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[ing_list],function(err,forgeds){
+                            connection.query("INSERT INTO egreso (`idpago`,`idcdc`,`detalle`,`fecha`,`tipo`,`monto`) VALUES ?",[egreso_list],function(err,forgeds){
                                 if(err) throw err;
                                 res.redirect('/');
                             });
