@@ -19,8 +19,8 @@ router.use(
 router.get('/',function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total,SUM(ingreso.monto) as i_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc" +
-            " LEFT JOIN ingreso ON ingreso.idcdc = cdc.idcdc GROUP BY cdc.idcdc",function(err,rows){
+        connection.query("SELECT cdc.*,SUM(egreso.monto)*COUNT(DISTINCT egreso.idegreso)/count(*) as e_total,SUM(ingreso.monto)*COUNT(DISTINCT ingreso.idingreso)/count(*) as i_total FROM cdc LEFT JOIN egreso ON cdc.idcdc = egreso.idcdc" +
+            " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc  GROUP BY cdc.idcdc",function(err,rows){
             if(err) throw err;
             res.render('cdc/cc_view',{data: rows});
         });
@@ -116,9 +116,10 @@ router.get("/mycdc",function(req,res,next){
 router.get("/show/:idcdc",function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query("SELECT cdc.*,SUM(egreso.monto) as e_total,SUM(ingreso.monto) as i_total FROM cdc LEFT JOIN egreso ON egreso.idcdc = cdc.idcdc" +
-            " LEFT JOIN ingreso ON ingreso.idcdc = cdc.idcdc WhERE cdc.idcdc = ? GROUP BY cdc.idcdc",req.params.idcdc,function(err,cdc){
+        connection.query("SELECT cdc.*, SUM(egreso.monto)*COUNT(DISTINCT egreso.idegreso)/count(*) as e_total,SUM(ingreso.monto)*COUNT(DISTINCT ingreso.idingreso)/count(*) as i_total FROM cdc LEFT JOIN egreso ON cdc.idcdc = egreso.idcdc" +
+            " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc  WHERE cdc.idcdc = ? GROUP BY cdc.idcdc LIMIT 1",req.params.idcdc,function(err,cdc){
             if(err) throw err;
+            console.log(cdc);
             connection.query("SELECT * FROM ingreso WHERE idcdc = ?",req.params.idcdc,function(err,ingresos){
                 if(err) throw err;
                 connection.query("SELECT * FROM egreso WHERE idcdc = ?",req.params.idcdc,function(err,egresos){

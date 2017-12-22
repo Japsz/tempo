@@ -3,6 +3,11 @@
     key = key.replace(/\//g,"");
     key = key.replace(/\ /g,"");
     key = key.replace(/\-/g,"");
+var total = 0;
+
+var gasPrice = new Intl.NumberFormat('es-CL',
+        { style: 'currency', currency: 'CLP',
+            minimumFractionDigits: 0 });
 %>
 <div class="container" id="key">
     <div class="row">
@@ -16,7 +21,7 @@
                     <div class="panelitem"><p><strong>Fecha de inicio:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_inicio).toLocaleDateString()%></p></div>
                     <div class="panelitem"><p><strong>Fecha de finalización:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_fin).toLocaleDateString()%></p></div>
                     <%var monto_total = cdc.i_total - cdc.e_total;%>
-                    <div class="panelitem"><p><strong>Monto Final:</strong></p><p style="margin-top: 5px"><%=monto_total%></p></div>
+                    <div class="panelitem"><p><strong>Monto Final:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(monto_total)%></p></div>
                 </div>
             </div>
         </div>
@@ -56,13 +61,15 @@
                     </thead>
                     <tbody>
                     <% if(ingreso.length){
+
                     for(var i = 0;i<ingreso.length;i++){
+                        total += ingreso[i].monto;
                     %>
                     <tr>
                         <td><%= ingreso[i].detalle%></td>
                         <td><%= ingreso[i].n_factura%></td>
                         <td><%= new Date(ingreso[i].fecha).toLocaleDateString()%></td>
-                        <td><%= ingreso[i].monto%></td>
+                        <td><%= gasPrice.format(ingreso[i].monto)%></td>
                         <td><a class="btn btn-info vercdc" data-idingreso="<%= ingreso[i].idingreso%>"><i class="fa fa-eye"></i>Ver</a></td>
                     </tr>
                     <% }
@@ -116,7 +123,7 @@
                         <td><%= egreso[i].detalle%></td>
                         <td><%= egreso[i].n_factura%></td>
                         <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
-                        <td><%= egreso[i].monto%></td>
+                        <td><%= gasPrice.format(egreso[i].monto)%></td>
                         <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
                     </tr>
                     <% }

@@ -1,3 +1,6 @@
+<% var gasPrice = new Intl.NumberFormat('es-CL',
+		{ style: 'currency', currency: 'CLP',
+			minimumFractionDigits: 0 });%>
 <div class="col-md-10 col-md-offset-1">
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -61,7 +64,7 @@
 				<td><%= data[i].detalle%></td>
 				<td><%= data[i].n_factura%></td>
 				<td><%= new Date(data[i].fecha).toLocaleDateString()%></td>
-				<td><%= data[i].monto%></td>
+				<td><%= gasPrice.format(data[i].monto)%></td>
 				<td><%= data[i].nombre%></td>
 				<td><a class="btn btn-info"><i class="fa fa-eye"></i>Ver</a></td>
 			</tr>

@@ -73,7 +73,6 @@ router.get('/pagoscsv_forged', function(req, res, next){
                     monto = Math.abs(parseInt(rows[i][0].replace(/\./g,"")));
                     fecha = rows[i][3].split("/");
                     fecha = new Date(fecha[2],fecha[1],fecha[0]);
-                    console.log(fecha);
                     mat_list.push([rows[i][1],fecha,fecha,tipo,monto,1]);
                 }
                 req.getConnection(function(err,connection){
@@ -115,7 +114,7 @@ router.get('/pagoscsv_forged', function(req, res, next){
 
 router.get('/render_carousel', function(req, res, next){
     req.getConnection(function(err, connection){
-        connection.query("SELECT pago.fecha_p, GROUP_CONCAT(pago.detalle,'@', pago.monto, '@', cdc.nombre,'@',pago.idpago,'@', pago.tipo) as content FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc WHERE pago.fecha_p > NOW() GROUP BY pago.fecha_p", function(err, pagos){
+        connection.query("SELECT pago.*,cdc.nombre FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc WHERE pago.fecha_p > NOW() GROUP BY pago.idpago ORDER BY pago.fecha ASC", function(err, pagos){
             if(err){console.log("Error Selecting : %s", err);}
             res.render("pagos/carousel_calendario", {data: pagos});
         });

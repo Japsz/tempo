@@ -3,6 +3,9 @@ key = key.replace(/\:/g,"");
 key = key.replace(/\//g,"");
 key = key.replace(/\ /g,"");
 key = key.replace(/\-/g,"");
+var gasPrice = new Intl.NumberFormat('es-CL',
+		{ style: 'currency', currency: 'CLP',
+			minimumFractionDigits: 0 });
 %>
 <div class="col-md-10 col-md-offset-1" id="<%= key%>">
 	<div class="panel panel-default">
@@ -26,8 +29,8 @@ key = key.replace(/\-/g,"");
 			<tr>
 				<td><%= data[i].nombre%></td>
 				<td><%= new Date(data[i].f_inicio).toLocaleDateString()%></td>
-				<td><%= data[i].e_total%></td>
-				<td><%= data[i].i_total%></td>
+				<td><%= gasPrice.format(data[i].e_total)%></td>
+				<td><%= gasPrice.format(data[i].i_total)%></td>
 				<td><a class="btn btn-info vercdc" data-idcdc="<%= data[i].idcdc%>"><i class="fa fa-eye"></i>Ver</a></td>
 			</tr>
 			<% }
