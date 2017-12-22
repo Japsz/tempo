@@ -105,6 +105,7 @@ router.post('/save_pay',function(req,res,next){
                 input.fecha_p = input.fecha;
                 connection.query("INSERT INTO pago SET ?", input, function(err, pago){
                     if(err){console.log("Error Selecting : %s", err);}
+                    var tipo = input.tipo.toLowerCase();
                     delete input.tipo;
                     delete input.n_factura;
                     delete input.fecha_p;
