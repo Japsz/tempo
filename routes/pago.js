@@ -114,9 +114,13 @@ router.get('/pagoscsv_forged', function(req, res, next){
 
 router.get('/render_carousel', function(req, res, next){
     req.getConnection(function(err, connection){
-        connection.query("SELECT pago.*,cdc.nombre FROM pago LEFT JOIN cdc ON pago.idcdc = cdc.idcdc WHERE pago.fecha_p > NOW() GROUP BY pago.idpago ORDER BY pago.fecha ASC", function(err, pagos){
+        connection.query("SELECT ingreso.idingreso AS idpagox,ingreso.*,cdc.nombre FROM ingreso LEFT JOIN cdc ON ingreso.idcdc = cdc.idcdc WHERE ingreso.fecha > NOW() GROUP BY ingreso.idingreso ORDER BY ingreso.fecha ASC", function(err, pagos){
             if(err){console.log("Error Selecting : %s", err);}
-            res.render("pagos/carousel_calendario", {data: pagos});
+            connection.query("SELECT egreso.idegreso AS idpagox,egreso.*,cdc.nombre FROM egreso LEFT JOIN cdc ON egreso.idcdc = cdc.idcdc WHERE egreso.fecha > NOW() GROUP BY egreso.idegreso ORDER BY egreso.fecha ASC", function(err, egresos){
+                if(err){console.log("Error Selecting : %s", err);}
+                connection.query("SELECT cdc.monto_final,SUM() AS  ")
+                res.render("pagos/carousel_calendario", {data: pagos,egresos: egresos},function(err,html){if(err) console.log(err); res.send(html)});
+            });
         });
     });
 });
