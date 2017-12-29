@@ -9,27 +9,61 @@
 		box-shadow: 5px 5px 5px rgb(10,10,10);
 	}
 </style>
-<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888; ">
+<div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888;height: 120% ">
 
 
 <h1 class="page-header title"><%=titulo%></h1>
 <div class="main" style="width: 100%">
 </div>
 
-
-
-<ul class="list-group container-flujo">
-  		
-
-</ul>
-	
-
 </div>
 
 <script type="text/javascript">
-	
+	var obj
+    function setobj(e){
+        obj = $(e).data();
+        delete obj.toggle;
+    }
+    function setmodal(e){
+        obj = $(e).data();
+        $("#upd_det").val(obj.detalle);
+        $("#upd_mon").val(obj.monto);
+        $("#upd_fec").val(obj.fecha);
+        $("#upd_pagx").val(obj.idpagx);
+        $("#upd_tipo").val(obj.tipo);
+    }
+    function del(){
+        $.ajax({
+            type: 'POST',
+            data: obj,
+            url: '/pagx/del_pagx',
+            success: function(data){
+                $(".main").html(data);
 
-	$.ajax({
+            }
+        });
+
+    }
+    $("form#upd_form").submit(function(e){
+        e.preventDefault();
+        var formArray = $(this).serializeArray();
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++){
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        console.log(returnArray);
+        $.ajax({
+            url: "/pagx/update_pagx",
+            type: 'POST',
+            data: returnArray,
+            success: function(data){
+                $(".main").html(data);
+                $("#update_pagx").toggle('modal');
+            }
+        })
+    });
+
+    $.ajax({
 			type: 'GET',
 			url: '/pagos/render_carousel', 
 			success: function(data){
@@ -38,10 +72,49 @@
 			}
 		});
 
-
-
-
-	
-	
-
 </script>
+<div class="modal fade" tabindex="-1" role="dialog" id="del_pagx">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Eliminar Pago</h4>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro que deseas borrar este elemento?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">No!</button>
+                <button type="button" onclick="del()" data-dismiss="modal" class="btn btn-danger">Si</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="update_pgx">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Editar</h4>
+            </div>
+            <form id="upd_form">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="detalle">Detalle</label>
+                    <input type="text" class="form-control" name="detalle" id="upd_det">
+                    <label for="monto">Monto</label>
+                    <input type="number" name="monto" class="form-control" id="upd_mon">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" min="<%= new Date().toLocaleDateString()%>" class="form-control" name="fecha" id="upd_fec">
+                    <input type="hidden" name="idpagx" id="upd_pagx">
+                    <input type="hidden" name="tipo" id="upd_tipo">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

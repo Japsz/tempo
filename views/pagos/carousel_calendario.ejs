@@ -2,46 +2,103 @@
 
 <div class="owl-carousel">
 <%var gasPrice = new Intl.NumberFormat('es-CL',
-		{ style: 'currency', currency: 'CLP',
+		{ style: 'decimal',
 			minimumFractionDigits: 0 });
-if(data.length){
-	var ahora = new Date(data[0].fecha).toLocaleDateString();
 	var cordion = 0;%>
+		<% while(data.length + egresos.length > 0){
+		    if(data.length && egresos.length){
+				if(new Date(data[0].fecha) <= new Date(egresos[0].fecha)) {
+					ahora = new Date(data[0].fecha).toLocaleDateString();
+				} else {
+					ahora = new Date(egresos[0].fecha).toLocaleDateString();
+				}
+			} else if(data.length){
+				ahora = new Date(data[0].fecha).toLocaleDateString();
+			} else {
+				ahora = new Date(egresos[0].fecha).toLocaleDateString();
+			}
+		%>
 	<div class='item imporDate'>
-		<h4><b>Fecha:<%= ahora%> </b> </h4>
-		<div class="panel-group" id="accordion0" role="tablist" aria-multiselectable="true">
-		<% for(var i=0; i< data.length; i++){
-			if(ahora != new Date(data[i].fecha).toLocaleDateString()){
-				cordion +=1;
-				ahora = new Date(data[i].fecha).toLocaleDateString();%>
-		</div>
-	</div>
-	<div class='item imporDate'>
-		<h4><b>Fecha:<%= ahora%> </b> </h4>
-		<div class="panel-group" id="accordion<%= cordion%>" role="tablist" aria-multiselectable="true">
-			<%}%>
-			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="heading<%= data[i].idpago%>">
+		<h4><b><%= ahora%></b> </h4>
+		<% if(data.length){%>
+		<div class="panel-group" id="accordion<%=cordion%>" role="tablist" aria-multiselectable="true">
+        	<% while(new Date(data[0].fecha).toLocaleDateString() == ahora){%>
+			<div class="panel panel-success">
+				<div class="panel-heading" role="tab" id="heading<%= data[0].idpagox%>">
 					<h3 class="panel-title">
-						<a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#collapse<%= data[i].idpago%>" aria-expanded="true" aria-controls="collapseOne">
-							<strong><%=data[i].detalle%></strong><small class="pull-right"><%= gasPrice.format(data[i].monto)%></small>
+						<a role="button" data-toggle="popover" data-container="body" href="#info<%= data[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">
+							<strong><%=data[0].detalle%></strong> <small><%=data[0].nombre%></small><b class="pull-right">$<%= gasPrice.format(data[0].monto)%></b>
 						</a>
+						<div class="btn-group pull-right" style="margin-right: 20px">
+							<a class="dropdown-toggle" role="button" id="dropdownMenu<%= data[0].idpagox%>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<i class="fa fa-edit"></i>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= data[0].idpagox%>">
+								<li><a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#collapse<%= data[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">Mover al ...</a></li>
+								<li><a data-toggle="modal" onclick="setmodal(this)" data-idpagx="<%=data[0].idingreso%>" data-tipo="ingreso" data-detalle="<%=data[0].detalle%>" data-monto="<%=data[0].monto%>" data-fecha="<%= new Date(data[0].fecha).toLocaleDateString()%>" href="#update_pgx">Editar</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a onclick="setobj(this)" data-idpagx="<%= data[0].idpagox%>" data-toggle="modal" data-tipo="ingreso" class="list-group-item-danger" href="#del_pagx">Borrar</a></li>
+							</ul>
+						</div>
 					</h3>
 				</div>
-				<div class='panel-collapse collapse' id='collapse<%= data[i].idpago%>' role="tabpanel" aria-labelledby="heading<%=data[i].idpago%>">
-					<div class='form-inline'>
-						<div class='input-group'>
-							<span class='input-group-addon' id='basic-addon<%= data[i].idpago%>'><span class='glyphicon glyphicon-calendar'></span></span>
-							<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date( data[i].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' aria-describedby='basic-addon<%= data[i].idpago%>' id="inputdate<%=i%>">
+				<div class='panel-collapse collapse' id='collapse<%= data[0].idpagox%>' role="tabpanel" aria-labelledby="heading<%=data[0].idpagox%>">
+					<div class='form-inline input-group'>
+						<span class='input-group-addon' id='basic-addon<%= data[0].idpagox%>'><span class='glyphicon glyphicon-calendar'></span></span>
+						<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date( data[0].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' id="inputdate<%=data[0].idpagox%>">
+						<div class="input-group-btn">
+							<button type='button' class='btn btn-primary saveDate' data-idinput='<%= data[0].idpagox%>'>Guardar</button>
 						</div>
-						<button type='button' class='btn btn-primary saveDate' data-idinput='<%= i%>' style='margin: 5px;'>Guardar</button>
 					</div>
 				</div>
 			</div>
-		<%}%>
+			<% data.shift();
+				if(data.length == 0) break;
+        	} cordion += 1;
+        	%>
 		</div>
-	</div>									<!--<button class='btn btn-primary' type='button' data-toggle='collapse' data-target='#collapse<%= i%>' aria-expanded='false' aria-controls='collapse<%= i%>'>Modificar evento</button>-->
-<%}%>
+		<%}%>
+		<% if(egresos.length){%>
+		<div class="panel-group" id="accordion<%=cordion%>" role="tablist" aria-multiselectable="true">
+            <% while(new Date(egresos[0].fecha).toLocaleDateString() == ahora){%>
+			<div class="panel panel-danger">
+				<div class="panel-heading" role="tab" id="headinge<%= egresos[0].idpagox%>">
+					<h3 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#info<%= egresos[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">
+							<strong><%=egresos[0].detalle%></strong> <small class="bold"><%=egresos[0].nombre%></small><b class="pull-right">$<%= gasPrice.format(egresos[0].monto)%></b>
+						</a>
+						<div class="btn-group pull-right" style="margin-right: 20px">
+							<a class="dropdown-toggle" role="button" id="dropdownMenu<%= egresos[0].idpagox%>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<i class="fa fa-edit"></i>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= egresos[0].idpagox%>">
+								<li><a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#collapsee<%= egresos[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">Mover al ...</a></li>
+								<li><a data-toggle="modal" onclick="setmodal(this)" data-idpagx="<%= egresos[0].idpagox%>" data-tipo="egreso" data-detalle="<%=egresos[0].detalle%>" data-monto="<%=egresos[0].monto%>" data-fecha="<%= new Date(egresos[0].fecha).toLocaleDateString()%>" href="#update_pgx">Editar</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a onclick="setobj(this)" data-idpagx="<%= egresos[0].idpagox%>" data-tipo="egreso" data-toggle="modal" class="list-group-item-danger" href="#del_pagx">Borrar</a></li>
+							</ul>
+						</div>
+					</h3>
+				</div>
+				<div class='panel-collapse panel-body collapse' id='collapsee<%= egresos[0].idpagox%>' role="tabpanel" aria-labelledby="headinge<%=egresos[0].idpago%>">
+					<div class='form-inline'>
+						<div class='input-group btn-group'>
+							<span class='input-group-addon' id='basic-addon<%= egresos[0].idpagox%>'><span class='glyphicon glyphicon-calendar'></span></span>
+							<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date(egresos[0].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' aria-describedby='basic-addon<%= egresos[0].idpagox%>' id="inputdate<%= egresos[0].idpagox%>">
+						</div>
+						<div class="input-group-btn">
+							<button type='button' class='btn btn-primary saveDate' data-idinput='<%= egresos[0].idpagox%>'>Guardar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+            <% egresos.shift();
+            	if(egresos.length == 0) break;
+			} cordion += 1;%>
+		</div>
+	<%	}%>
+	</div>
+		<%}%>
 </div>
 
 <script type="text/javascript">
@@ -52,7 +109,7 @@ if(data.length){
 				        singleItem: true,
 
 				        // "singleItem:true" is a shortcut for:
-				        items : 2
+				        items : 3
 				        //itemsDesktop : false
 				        // itemsDesktopSmall : false,
 				        // itemsTablet: false,

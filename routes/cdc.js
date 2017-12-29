@@ -20,9 +20,9 @@ router.get('/',function(req,res,next){
     req.getConnection(function(err,connection){
         if(err) throw err;
         connection.query("SELECT cdc.*,SUM(egreso.monto)*COUNT(DISTINCT egreso.idegreso)/count(*) as e_total,SUM(ingreso.monto)*COUNT(DISTINCT ingreso.idingreso)/count(*) as i_total FROM cdc LEFT JOIN egreso ON cdc.idcdc = egreso.idcdc" +
-            " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc  GROUP BY cdc.idcdc",function(err,rows){
+            " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc WHERE cdc.idcdc > 1 GROUP BY cdc.idcdc",function(err,rows){
             if(err) throw err;
-            res.render('cdc/cc_view',{data: rows});
+            res.render('cdc/cc_view',{data: rows},function(err,html){if(err) console.log(err); res.send(html)});
         });
     });
 });

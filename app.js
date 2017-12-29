@@ -10,9 +10,9 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var cdc = require('./routes/cdc');
 var pago = require('./routes/pago');
+var pagox = require('./routes/pagox');
 
 var app = express();
-
 
 // view engine setup
 app.set('port', process.env.PORT || 4300);
@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/pagx', pagox);
 app.use('/cdc', cdc);
 app.use('/pagos', pago);
 
