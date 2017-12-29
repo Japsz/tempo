@@ -29,7 +29,7 @@ router.get('/',function(req,res,next){
 router.post('/save',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
     console.log(input);
-    eq.getConnection(function(err,connection){
+    req.getConnection(function(err,connection){
         if(err) throw err;
         connection.query("INSERT INTO cdc SET ?",input,function(err,rows){
             if(err) throw err;
@@ -39,7 +39,7 @@ router.post('/save',function(req,res,next){
 });
 
 
-function js_yyyy_mm_dd_hh_mm_ss () {
+function js_dateformat () {
   now = new Date();
   year = "" + now.getFullYear();
   month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
@@ -50,21 +50,54 @@ function js_yyyy_mm_dd_hh_mm_ss () {
   return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 }
 
+
+router.get('/mycdc_gastos', function(req, res, next){
+    req.getConnection(function(err, connection){
+        connection.query("SELECT * FROM egreso WHERE idcdc = 1",function(err,egresos){
+            if(err) throw err;
+            res.render('cdc/mycdc_gastos',{egreso:egresos});
+        });
+    });
+});
+
 router.post('/save_pay',function(req,res,next){
     var input = JSON.parse(JSON.stringify(req.body));
-    input.tipo = input.tipo.toLowerCase();
-    var tipo = input.tipo;
+    console.log(input);    
     req.getConnection(function(err,connection){
         if(err) throw err;
-        if(input.tipo == 'egreso'){
-            console.log(input);
-            input.fechacreacion = js_yyyy_mm_dd_hh_mm_ss();
-            delete input.metodopago;
-            delete input.tipo;
-            connection.query("INSERT INTO "+tipo+" SET ?", input, function(err, rows){
+        if(input.metodopago){
+            console.log("Aqui entra si tiene metodo de pago");
+            var arpagos = [];
+            var aregresos = [];
+            var date = new Date(input.fecha);
+            var factor = 0;
+            if(input.metodopago == 'mensual'){factor = 60*1000*60*24*30;}   
+            else if(input.metodopago == 'anual'){factor = 60*1000*60*24*30*12;}
+            for(var k=0; k < input.cant_pagos; k++){
+                var a = k+1;     
+                arpagos.push([input.idcdc, input.monto, date, date, input.detalle+" (Pago "+a+")", input.tipo]);
+                date = new Date(date.getTime() + factor );
+            }
+            console.log(arpagos);
+            connection.query("INSERT INTO pago (idcdc, monto, fecha, fecha_p, detalle, tipo) VALUES ?", [arpagos], function(err, newPagos){
                 if(err){console.log("Error Selecting : %s", err);}
-                res.redirect('/cdc/mycdc_gastos');
+                console.log(newPagos);
+                var init_id = newPagos.insertId;
+                var aff = newPagos.affectedRows;
+                var fecha = new Date(input.fecha);
+                for(var h=0; h < input.cant_pagos; h++){
+                    var num = h+1;
+                    aregresos.push([input.idcdc, init_id+h, input.monto, fecha, input.detalle+" (Pago "+num+")", 'no-pagado']);
+                    fecha = new Date(fecha.getTime() + factor);
+                }
+                console.log(aregresos);
+                connection.query("INSERT INTO egreso (idcdc, idpago, monto, fecha, detalle, tipo) VALUES ?", [aregresos], 
+                    function(err, rows){
+                        if(err){console.log("Error Selecting : %s", err);}
+                        res.redirect('/cdc/mycdc_gastos');
+                });
             });
+            
         }
         else{
             if(input.fac == "1"){
@@ -72,6 +105,7 @@ router.post('/save_pay',function(req,res,next){
                 input.fecha_p = input.fecha;
                 connection.query("INSERT INTO pago SET ?", input, function(err, pago){
                     if(err){console.log("Error Selecting : %s", err);}
+                    var tipo = input.tipo.toLowerCase();
                     delete input.tipo;
                     delete input.n_factura;
                     delete input.fecha_p;
@@ -83,6 +117,7 @@ router.post('/save_pay',function(req,res,next){
                 });
             }
             else{
+                    var tipo = input.tipo.toLowerCase();
                     delete input.fac;
                     delete input.tipo;
                     delete input.n_factura;
@@ -105,8 +140,6 @@ router.get("/mycdc",function(req,res,next){
             if(err) throw err;
             connection.query("SELECT * FROM egreso WHERE idcdc = 1",function(err,egresos){
                 if(err) throw err;
-                console.log(cdc);
-                console.log(egresos);
                 res.render('cdc/mycdc',{cdc: cdc[0],egreso:egresos});
             });
         });
