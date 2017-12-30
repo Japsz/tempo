@@ -21,7 +21,12 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                     <div class="panelitem"><p><strong>Fecha de inicio:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_inicio).toLocaleDateString()%></p></div>
                     <div class="panelitem"><p><strong>Fecha de finalización:</strong></p><p style="margin-top: 5px"><%= new Date(cdc.f_fin).toLocaleDateString()%></p></div>
                     <%var monto_total = cdc.i_total - cdc.e_total;%>
-                    <div class="panelitem"><p><strong>Monto Final:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(monto_total)%></p></div>
+                    
+                    <div class="panelitem"><p><strong>Monto Contrato:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(cdc.monto_final)%></p></div>
+                    
+                    <div class="panelitem"><p><strong>Balance Actual:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(monto_total)%></p></div>
+
+                    <div class="panelitem"><p><strong>Utilidad Final:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(parseInt(cdc.monto_final) + parseInt(monto_total) )%></p></div>
                 </div>
             </div>
         </div>
