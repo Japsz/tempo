@@ -153,10 +153,16 @@ router.get("/show/:idcdc",function(req,res,next){
             " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc  WHERE cdc.idcdc = ? GROUP BY cdc.idcdc LIMIT 1",req.params.idcdc,function(err,cdc){
             if(err) throw err;
             console.log(cdc);
-            connection.query("SELECT * FROM ingreso WHERE idcdc = ?",req.params.idcdc,function(err,ingresos){
+            connection.query("SELECT ingreso.*,pago.n_factura FROM ingreso LEFT JOIN pago ON ingreso.idpago = pago.idpago WHERE ingreso.idcdc = ?",req.params.idcdc,function(err,ingresos){
                 if(err) throw err;
-                connection.query("SELECT * FROM egreso WHERE idcdc = ?",req.params.idcdc,function(err,egresos){
+                connection.query("SELECT egreso.*,pago.n_factura FROM egreso LEFT JOIN pago ON egreso.idpago = pago.idpago WHERE egreso.idcdc = ?",req.params.idcdc,function(err,egresos){
                     if(err) throw err;
+                    console.log("CENTRO DE COSTOS");
+                    console.log(cdc[0]);
+                    console.log("INGRESOS");
+                    console.log(ingresos);
+                    console.log("EGRESOS");
+                    console.log(egresos);
                     res.render('cdc/show_cdc',{cdc: cdc[0],ingreso:ingresos,egreso:egresos});
                 });
             });
