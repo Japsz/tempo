@@ -12,7 +12,35 @@
 <div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888;height: 120% ">
 
 
-<h1 class="page-header title"><%=titulo%></h1>
+<h1 class="page-header title" ><%=titulo%> <a class="btn btn-success" href="#new_pagx" data-toggle="collapse" data-tipo="ingreso"> + Ingreso</a><a class="btn btn-danger" data-toggle="collapse" href="#new_pagx" data-tipo="egreso"> + Egreso</a></h1>
+<div class="collapse" id="new_pagx">
+    <form class="pagxform">
+        <h3>Crear :</h3>
+        <div class="form-inline">
+            <input placeholder="Descripción" maxlength="100" type="text" name="detalle" class="form-control" required>
+            <input type="date" name="fecha" id="fecha" min="<%= new Date().toLocaleDateString()%>" class="form-control" placeholder="ajá" required>
+            <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Probable: </label>
+            <label>
+                <input type="radio" name="probable" class="radio" value="1">
+                Si
+            </label>
+            <label>
+                <input type="radio" name="probable" class="radio" value="0">
+                No
+            </label>
+        </div>
+        <select class="form-control" name="idcdc">
+            <% for(var i = 0;i<data.length;i++){%>
+            <option value="<%=data[i].idcdc%>"><%= data[i].nombre%></option>
+            <%}%>
+        </select>
+        <input type="hidden" class="hidden" name="tipo" value="egreso">
+
+    </form>
+</div>
 <div class="main" style="width: 100%">
 </div>
 
@@ -58,7 +86,7 @@
             data: returnArray,
             success: function(data){
                 $(".main").html(data);
-                $("#update_pagx").toggle('modal');
+                $("#update_pgx").modal('toggle');
             }
         })
     });

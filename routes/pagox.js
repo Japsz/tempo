@@ -38,4 +38,15 @@ router.post('/update_pagx', function(req, res, next){
         });
     });
 });
+router.post('/insert_pagx', function(req, res, next){
+    var input = JSON.parse(JSON.stringify(req.body));
+    var tipo = input.tipo;
+    delete input.tipo;
+    req.getConnection(function(err, connection){
+        connection.query("INSERT INTO "+ tipo + " SET ?",[input], function(err, egresos){
+            if(err){console.log("Error Selecting : %s", err);}
+            res.redirect("/pagos/render_carousel");
+        });
+    });
+});
 module.exports = router;
