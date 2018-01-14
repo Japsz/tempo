@@ -152,21 +152,26 @@ router.get("/show/:idcdc",function(req,res,next){
         connection.query("SELECT cdc.*, SUM(egreso.monto)*COUNT(DISTINCT egreso.idegreso)/count(*) as e_total,SUM(ingreso.monto)*COUNT(DISTINCT ingreso.idingreso)/count(*) as i_total FROM cdc LEFT JOIN egreso ON cdc.idcdc = egreso.idcdc" +
             " LEFT JOIN ingreso ON cdc.idcdc = ingreso.idcdc  WHERE cdc.idcdc = ? GROUP BY cdc.idcdc LIMIT 1",req.params.idcdc,function(err,cdc){
             if(err) throw err;
-            console.log(cdc);
             connection.query("SELECT ingreso.*,pago.n_factura FROM ingreso LEFT JOIN pago ON ingreso.idpago = pago.idpago WHERE ingreso.idcdc = ?",req.params.idcdc,function(err,ingresos){
                 if(err) throw err;
                 connection.query("SELECT egreso.*,pago.n_factura FROM egreso LEFT JOIN pago ON egreso.idpago = pago.idpago WHERE egreso.idcdc = ?",req.params.idcdc,function(err,egresos){
                     if(err) throw err;
-                    console.log("CENTRO DE COSTOS");
-                    console.log(cdc[0]);
-                    console.log("INGRESOS");
-                    console.log(ingresos);
-                    console.log("EGRESOS");
-                    console.log(egresos);
                     res.render('cdc/show_cdc',{cdc: cdc[0],ingreso:ingresos,egreso:egresos});
                 });
             });
         });
+    });
+});
+
+
+router.get('/graficos', function(req, res, next){
+    req.getConnection(function(err, connection){
+            
+            connection.query("SELECT fecha,GROUP_CONCAT(monto,'@',tipo) as token FROM probable WHERE fecha BETWEEN '2017-01-01' AND '2017-12-30' GROUP BY fecha", function(err, dataGrap){
+                if(err) throw err;
+                res.render('cdc/graficos', {grap: dataGrap});
+            });
+        
     });
 });
 

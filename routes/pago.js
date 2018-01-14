@@ -126,6 +126,54 @@ router.get('/render_carousel', function(req, res, next){
 });
 
 
+router.get('/probablescsv_forged', function(req, res, next){
+        var fs = require('fs')
+        var parse = require('csv-parse');
+
+        var parser = parse(
+            function(err,rows){
+                if(err) throw err;
+                var aux = [];
+                var prob_list = [];
+                var ing_list = [];
+                var egreso_list = [];
+                var fecha,monto,tipo;
+
+                //idprobable, idpago, detalle, fecha, monto, tipo
+                for(var i=1;i<rows.length;i++){
+                    if(rows[i][7] == "C"){
+                        tipo = "egreso";
+                    } else if( rows[i][7] == "A"){
+                        tipo = "ingreso";
+                    }
+                    aux.push(rows[i][7]);
+                    monto = Math.abs(parseInt(rows[i][0].replace(/\./g,"")));
+                    fecha = rows[i][3].split("/");
+                    fecha = new Date(fecha[2],fecha[1],fecha[0]);
+                    prob_list.push([rows[i][1],fecha,monto,tipo]);
+                }
+                req.getConnection(function(err,connection){
+                    if(err) throw err;
+                    connection.query("INSERT INTO probable (`detalle`,`fecha`,`monto`,`tipo`) VALUES ?",[prob_list],function(err,rows){
+                        if(err) {
+                            throw err;
+                        }
+                    });
+                }); });
+
+                var input = fs.createReadStream('cartola.csv');
+                input.pipe(parser);
+
+                /*input.pipe(parse(function(err, rows){
+                    if(err) throw err;
+                    console.log(rows);
+                }));*/
+
+        });
+ 
+
+
+
 
 
 module.exports = router;

@@ -9,8 +9,10 @@ var gasPrice = new Intl.NumberFormat('es-CL',
         { style: 'currency', currency: 'CLP',
             minimumFractionDigits: 0 });
 %>
+
+
 <!-- Modal -->
-<div class="modal fade" id="factorizacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="factorizacionModal<%= key%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -19,43 +21,47 @@ var gasPrice = new Intl.NumberFormat('es-CL',
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <div>
-              <div style="margin-left: 5%; margin-right: 5%; width: 90%">
-                    <h4 style="display: flex;">Detalle:     <div class="detalle-in"></div></h4>
-                    <h5 style="display: flex;">Monto: $  <div class="monto-in"></div></h5>
-              </div>
-        </div>
-        <div class="form-group" style="margin-top: 20px;">
-          <label for="tipo-fac">Tipo de factorización:</label>
-          <select class="form-control" id="tipo-fac" onchange="displayChange(this)">
-            <option value="fijo">Fijo</option>
-            <option value="retorno" selected>Con retorno</option>
-          </select>
-        </div>
-        <div class="div-fijo">
-            <div class="form-group">
-              <label for="por-venta">Porcentaje de venta:</label>
-              <input class="form-control" type="number" name="por-venta">
+          <div class="modal-body">
+            <div>
+                  <div style="margin-left: 5%; margin-right: 5%; width: 90%">
+                        <h4 style="display: flex;">Detalle:     <div class="detalle-in"></div></h4>
+                        <h5 style="display: flex;">Monto: $  <div class="monto-in"></div></h5>
+                  </div>
             </div>
-        </div>
-        <div class="div-retorno">
-            <div class="form-group">
-              <label for="por-ret">Porcentaje de retorno (Intereses): </label>
-              <input class="form-control" type="number" name="por-ret">
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Aceptar</button>
-      </div>
+            
+            <form class="form-fact">
+            <input type="hidden" name="idcdc" value="<%= cdc.idcdc%>">
+            <input type="hidden" name="idingreso" id="idingreso">
+            <input type="hidden" name="detalle" id="detailIngreso">
+                <div class="form-group" style="margin-top: 20px;">
+                  <label for="tipo-fac">Tipo de factorización:</label>
+                  <select class="form-control" name="tipo-fac" onchange="displayChange(this)">
+                    <option value="fijo">Fijo</option>
+                    <option value="retorno" selected>Con retorno</option>
+                  </select>
+                </div>
+                <div class="div-fijo">
+                    <div class="form-group">
+                      <label for="por-venta">Porcentaje de venta:</label>
+                      <input class="form-control" type="number" name="por-venta">
+                    </div>
+                </div>
+                <div class="div-retorno">
+                    <div class="form-group">
+                      <label for="por-ret">Porcentaje de retorno (Intereses): </label>
+                      <input class="form-control" type="number" name="por-ret">
+                    </div>
+                </div>
+             </form>   
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary sendFactorizacion" data-dismiss="modal">Aceptar</button>
+          </div>
     </div>
   </div>
 </div>
-
-
-<div class="container" id="key">
+<div class="container" id="<%= key%>">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-primary">
@@ -133,10 +139,18 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                         <td><%= gasPrice.format(ingreso[i].monto)%></td>
                         <td>
                             <div class="dropdown">
-                                <a class="vercdc dropdown-toggle" data-toggle="dropdown" data-idingreso="<%= ingreso[i].idingreso%>"><i class="glyphicon glyphicon-option-horizontal"></i></a>
-                                  <ul class="dropdown-menu">
+                                <a class="in-options dropdown-toggle" data-toggle="dropdown" data-idingreso="<%= ingreso[i].idingreso%>"><i class="glyphicon glyphicon-option-horizontal"></i></a>
+                                <style type="text/css">
+                                    .dropdown-options li:hover{
+                                        cursor: pointer;
+                                    }
+                                    .in-options:hover{
+                                        cursor: pointer;
+                                    }
+                                </style>
+                                  <ul class="dropdown-menu dropdown-options">
                                     <%if(ingreso[i].idpago != null){%>
-                                        <li><a class="factorizar" data-idin="<%= ingreso[i].idingreso%>" data-detail="<%= ingreso[i].detalle%>" data-monto="<%= ingreso[i].monto%>"  data-toggle="modal" data-target="#factorizacionModal">Factorizar</a></li>
+                                        <li><a class="factorizar" data-idin="<%= ingreso[i].idingreso%>" data-detail="<%= ingreso[i].detalle%>" data-monto="<%= ingreso[i].monto%>" data-toggle="modal" data-target="#factorizacionModal<%= key%>">Factorizar</a></li>
                                     <%}%>    
                                         <li><a class="del-ingreso" data-idin="<%= ingreso[i].idingreso%>">Eliminar</a></li>
                                   </ul>
@@ -243,7 +257,23 @@ var gasPrice = new Intl.NumberFormat('es-CL',
     $(".factorizar").on('click', function(e){
         e.preventDefault();
         $(".detalle-in").html($(this).data("detail"));
+        $("#detailIngreso").val($(this).data("detail"));
         $(".monto-in").html($(this).data("monto"));
+        $("#idingreso").val($(this).data("idin"));
+    });
+
+
+    $("#factorizacionModal<%= key%> .sendFactorizacion").on('click', function(e){
+            e.preventDefault();
+            var formFact = $(".form-fact").serializeArray();
+            $.ajax({
+                type: 'POST',
+                data: formFact,
+                url: '/factor_pag',
+                success: function(data){
+                    $("#page-container").html(data);                
+                }
+            });
     });
 
 </script>
