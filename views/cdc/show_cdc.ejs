@@ -213,7 +213,27 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                         <td><%= egreso[i].n_factura%></td>
                         <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
                         <td><%= gasPrice.format(egreso[i].monto)%></td>
-                        <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
+                        <td>
+                            <div class="dropdown">
+                                <a class="in-options dropdown-toggle" data-toggle="dropdown" data-idingreso="<%= ingreso[i].idingreso%>"><i class="glyphicon glyphicon-option-horizontal"></i></a>
+                                <style type="text/css">
+                                    .dropdown-options li:hover{
+                                        cursor: pointer;
+                                    }
+                                    .in-options:hover{
+                                        cursor: pointer;
+                                    }
+                                </style>
+                                  <ul class="dropdown-menu dropdown-options">
+                                    <%if(egreso[i].idpago != null){%>
+                                        <li><a class="factorizar" data-ideg="<%= egreso[i].idegreso%>" data-detail="<%= egreso[i].detalle%>" data-monto="<%= egreso[i].monto%>" data-toggle="modal" data-target="#factorizacionModal<%= key%>">Factorizar</a></li>
+                                    <%}%>    
+                                        <li>
+                                            <a class="del-egreso" data-idin="<%= egreso[i].idegreso%>">Eliminar</a>
+                                        </li>
+                                  </ul>
+                            </div>
+                        </td>
                     </tr>
                     <% }
                     } else {%>

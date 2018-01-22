@@ -27,12 +27,22 @@ router.post('/del_pagx', function(req, res, next){
 });
 router.post('/update_pagx', function(req, res, next){
     var input = JSON.parse(JSON.stringify(req.body));
+    console.log(input);
     var idpagx = parseInt(input.idpagx);
     var tipo = input.tipo;
-    delete input.tipo;
+    //delete input.tipo;
+    input.idprobable = input.idpagx;
+    input.fecha_p = input.fecha;
     delete input.idpagx;
-    req.getConnection(function(err, connection){
+    delete input.fecha;
+    /*req.getConnection(function(err, connection){
         connection.query("UPDATE "+ tipo + " SET ? WHERE id"+tipo + " = ? ",[input,idpagx], function(err, egresos){
+            if(err){console.log("Error Selecting : %s", err);}
+            res.redirect("/pagos/render_carousel");
+        });
+    });*/
+    req.getConnection(function(err, connection){
+        connection.query("UPDATE probable SET ? WHERE idprobable = ? ",[input,idpagx], function(err, egresos){
             if(err){console.log("Error Selecting : %s", err);}
             res.redirect("/pagos/render_carousel");
         });
