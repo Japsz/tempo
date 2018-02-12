@@ -7,41 +7,57 @@
 		background-color: white;
 		border-radius: 2%;
 		box-shadow: 5px 5px 5px rgb(10,10,10);
+        overflow: visible;
 	}
 </style>
 <div style="margin-left: 3%; margin-right: 3%; margin-top: 20px; background-color: rgb(255, 202, 51); padding: 20px; box-shadow: 10px 10px 5px #888888;height: 120% ">
 
 
-<h1 class="page-header title" ><%=titulo%> <a class="btn btn-success" href="#new_pagx" data-toggle="collapse" data-tipo="ingreso"> + Ingreso</a><a class="btn btn-danger" data-toggle="collapse" href="#new_pagx" data-tipo="egreso"> + Egreso</a></h1>
+<h1 class="page-header title" ><%=titulo%> <a class="btn btn-success" href="#new_pagx" data-toggle="collapse"> + Pago</a></h1>
 <div class="collapse" id="new_pagx">
-    <form class="pagxform">
-        <h3>Crear :</h3>
-        <div class="form-inline">
-            <input placeholder="Descripción" maxlength="100" type="text" name="detalle" class="form-control" required>
-            <input type="date" name="fecha" id="fecha" min="<%= new Date().toLocaleDateString()%>" class="form-control" placeholder="ajá" required>
-            <input placeholder="Monto" type="number" name="monto" maxlength="2" class="form-control" required>
+    <form class="pagxform form-horizontal">
+        <div class="form-group">
+            <div class="col-md-5">
+                <label for="tipo">Tipo: </label>
+                <label class="radio-inline">
+                    <input type="radio" name="tipo" class="radio radiotipo" value="ingreso">
+                    Ingreso
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="tipo" class="radio radiotipo" value="egreso">
+                    Egreso
+                </label>
+            </div>
         </div>
         <div class="form-group">
-            <label>Probable: </label>
-            <label>
-                <input type="radio" name="probable" class="radio" value="1">
-                Si
-            </label>
-            <label>
-                <input type="radio" name="probable" class="radio" value="0">
-                No
-            </label>
-        </div>
-        <select class="form-control" name="idcdc">
-            <% for(var i = 0;i<data.length;i++){%>
-            <option value="<%=data[i].idcdc%>"><%= data[i].nombre%></option>
-            <%}%>
-        </select>
-        <input type="hidden" class="hidden" name="tipo" value="egreso">
+            <div class="col-md-4">
+                <label for="detalle">Descripción</label>
+                <input placeholder="Pago 2" maxlength="100" type="text" name="detalle" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="monto">Monto</label>
+                <input placeholder="200000" type="number" name="monto" maxlength="2" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="fecha">Fecha</label>
+                <input type="date" name="fecha" id="fecha" min="<%= new Date().toLocaleDateString()%>" class="form-control" required>
+            </div>
 
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <label>Centro de costo</label>
+                <select class="form-control" name="idcdc">
+                    <% for(var i = 0;i<data.length;i++){%>
+                    <option value="<%=data[i].idcdc%>"><%= data[i].nombre%></option>
+                    <%}%>
+                </select>
+            </div>
+
+        </div>
     </form>
 </div>
-<div class="main" style="width: 100%">
+<div class="main" style="width: 100%; z-index:-1">
 </div>
 
 </div>
@@ -51,6 +67,13 @@
     function setobj(e){
         obj = $(e).data();
         delete obj.toggle;
+    }
+    function setmove(e){
+        obj = $(e).data();
+        $("#move_fec").val(obj.fecha);
+        $("#move_pagx").val(obj.idpagx);
+        $("#move_tipo").val(obj.tipo);
+
     }
     function setmodal(e){
         obj = $(e).data();
@@ -87,6 +110,24 @@
             success: function(data){
                 $(".main").html(data);
                 $("#update_pgx").modal('toggle');
+            }
+        })
+    });
+    $("form#move_form").submit(function(e){
+        e.preventDefault();
+        var formArray = $(this).serializeArray();
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++){
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        console.log(returnArray);
+        $.ajax({
+            url: "/pagx/update_pagx",
+            type: 'POST',
+            data: returnArray,
+            success: function(data){
+                $(".main").html(data);
+                $("#moveto").modal('toggle');
             }
         })
     });
@@ -142,6 +183,30 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-success">Guardar Cambios</button>
             </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="moveto">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Mover Pago</h4>
+            </div>
+            <form id="move_form">
+                <div class="modal-body">
+                    <div class='form-inline input-group'>
+                        <span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span></span>
+                        <input type='date' class='form-control' name="fecha" min="<%= new Date().toLocaleDateString()%>" id="move_fec" placeholder='Ingrese nueva fecha'>
+                    </div>
+                    <input type="hidden" name="idpagx" id="move_pagx">
+                    <input type="hidden" name="tipo" id="move_tipo">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Mover</button>
+                </div>
             </form>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
