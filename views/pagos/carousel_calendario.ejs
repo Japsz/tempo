@@ -85,24 +85,45 @@
 
 			}
 		%>
-	<div class='item imporDate'>
+	<div class='item imporDate' id="<%= ahora%>">
 		<h4><b><%= ahora%></b> </h4>
+		<div class="panel saldo-inicial">
+	        	<div class="panel-heading" role="tab"><h3>Saldo Inicial: $</h3></div>
+        	</div>
 		<% if(data.length){%>
 		<div class="panel-group" id="accordion<%=cordion%>" role="tablist" aria-multiselectable="true">
         	<% while(new Date(data[0].fecha).toLocaleDateString() == ahora){%>
-			<div class="panel panel-success">
+			<div class="panel panel-success pagox-item" data-monto= "<%= data[0].monto%>">
 				<div class="panel-heading" role="tab" id="heading<%= data[0].idpagox%>">
 					<h3 class="panel-title">
 						<a role="button" data-toggle="popover" data-container="body" href="#info<%= data[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">
 							<strong><%=data[0].detalle%></strong><b class="pull-right">$<%= gasPrice.format(data[0].monto)%></b>
 						</a>
 						<a onclick="vercdc(<%= data[0].idcdc%>)" href="#" style="margin-left: 10px;"><%=data[0].nombre%></a>
-						<div class="btn-group-xs pull-right" style="margin-right: 20px">
-							<a class="btn btn-info" onclick="setmove(this)" data-tipo="ingreso" data-toggle="modal" href="#moveto" data-idpagx="<%= data[0].idpagox%>" data-fecha="<%= new Date( data[0].fecha).toLocaleDateString()%>" aria-expanded="true"><i class="fa fa-arrow-right"></i></a>
-							<a data-toggle="modal" onclick="setmodal(this)" class="btn btn-warning" data-idpagx="<%=data[0].idingreso%>" data-tipo="ingreso" data-detalle="<%=data[0].detalle%>" data-monto="<%=data[0].monto%>" data-fecha="<%= new Date(data[0].fecha).toLocaleDateString()%>" href="#update_pgx"><i class="fa fa-wrench"></i></a>
-							<a onclick="setobj(this)" data-idpagx="<%= data[0].idpagox%>" data-toggle="modal" data-tipo="ingreso" class="btn btn-danger" href="#del_pagx"><i class="fa fa-remove"></i></a>
+
+						<div class="btn-group pull-right" style="margin-right: 20px">
+							<a class="dropdown-toggle" role="button" id="dropdownMenu<%= data[0].idpagox%>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<i class="fa fa-edit"></i>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu<%= data[0].idpagox%>">
+								<li><a class="btn btn-info" onclick="setmove(this)" data-tipo="ingreso" data-toggle="modal" href="#moveto" data-idpagx="<%= data[0].idpagox%>" data-fecha="<%= new Date( data[0].fecha).toLocaleDateString()%>" aria-expanded="true"><i class="fa fa-arrow-right"></i></a></li>
+								<li><a data-toggle="modal" onclick="setmodal(this)" class="btn btn-warning" data-idpagx="<%=data[0].idingreso%>" data-tipo="ingreso" data-detalle="<%=data[0].detalle%>" data-monto="<%=data[0].monto%>" data-fecha="<%= new Date(data[0].fecha).toLocaleDateString()%>" href="#update_pgx"><i class="fa fa-wrench"></i></a></li>
+								<li role="separator" class="divider"></li>
+								<li><a onclick="setobj(this)" data-idpagx="<%= data[0].idpagox%>" data-toggle="modal" data-tipo="ingreso" class="btn btn-danger" href="#del_pagx"><i class="fa fa-remove"></i></a></li>
+							</ul>
 						</div>
 					</h3>
+				</div>
+				<div class='panel-collapse collapse' id='collapse<%= data[0].idpagox%>' role="tabpanel" aria-labelledby="heading<%=data[0].idpagox%>">
+					<div class='form-inline input-group' style="display: flex;">
+						<div class='input-group btn-group'>
+							<span class='input-group-addon' id='basic-addon<%= data[0].idpagox%>'><span class='glyphicon glyphicon-calendar'></span></span>
+								<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date( data[0].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' id="inputdate<%=data[0].idpagox%>">
+						</div>
+						<div class="input-group-btn">
+							<button type='button' class='btn btn-primary saveDate' data-idinput='<%= data[0].idpagox%>'>Guardar</button>
+						</div>
+					</div>
 				</div>
 			</div>
 			<% data.shift();
@@ -112,9 +133,9 @@
 		</div>
 		<%}%>
 		<% if(egresos.length){%>
-		<div class="panel-group" id="accordion<%=cordion%>" role="tablist" aria-multiselectable="true">
+		<div class="panel-group fecha-item" id="accordion<%=cordion%>" role="tablist" aria-multiselectable="true">
             <% while(new Date(egresos[0].fecha).toLocaleDateString() == ahora){%>
-			<div class="panel panel-danger">
+			<div class="panel panel-danger pagox-item" data-monto= "-<%= egresos[0].monto%>">
 				<div class="panel-heading" role="tab" id="headinge<%= egresos[0].idpagox%>">
 					<h3 class="panel-title">
 						<a role="button" data-toggle="collapse" data-parent="#accordion<%= cordion%>" href="#info<%= egresos[0].idpagox%>" aria-expanded="true" aria-controls="collapseOne">
@@ -128,7 +149,7 @@
 					</h3>
 				</div>
 				<div class='panel-collapse panel-body collapse' id='collapsee<%= egresos[0].idpagox%>' role="tabpanel" aria-labelledby="headinge<%=egresos[0].idpago%>">
-					<div class='form-inline'>
+					<div class='form-inline' style="display: flex;">
 						<div class='input-group btn-group'>
 							<span class='input-group-addon' id='basic-addon<%= egresos[0].idpagox%>'><span class='glyphicon glyphicon-calendar'></span></span>
 							<input type='date' class='form-control' min="<%= new Date().toLocaleDateString()%>" value="<%= new Date(egresos[0].fecha).toLocaleDateString()%>" placeholder='Ingrese nueva fecha' aria-describedby='basic-addon<%= egresos[0].idpagox%>' id="inputdate<%= egresos[0].idpagox%>">
@@ -142,8 +163,14 @@
             <% egresos.shift();
             	if(egresos.length == 0) break;
 			} cordion += 1;%>
+			
+			
+		
 		</div>
 	<%	}%>
+	<div class="panel saldo-final">
+	        	<div class="panel-heading" role="tab"><h3>Saldo Final: $</h3></div>
+        	</div>
 	</div>
 		<%}%>
 </div>
@@ -156,7 +183,7 @@
 				        singleItem: true,
 
 				        // "singleItem:true" is a shortcut for:
-				        items : 3
+				        items : 2
 				        //itemsDesktop : false
 				        // itemsDesktopSmall : false,
 				        // itemsTablet: false,
@@ -184,6 +211,28 @@
                 $(".main").html(data);
 			}
 		});
+	});
+	var inicial = <%= saldo%>;
+	$(".imporDate").each(function(){
+		if(inicial < 0){
+			$( "#"+$(this).attr('id')+" .saldo-inicial").addClass('panel-danger');
+		}
+		else{
+			$( "#"+$(this).attr('id')+" .saldo-inicial").addClass('panel-success');	
+		}
+		$( "#"+$(this).attr('id')+" .saldo-inicial div h3").append(inicial);
+		var sum = 0;
+		$("#"+$(this).attr('id')+" .pagox-item").each(function(){
+			sum += $(this).data('monto');
+		});
+		inicial += sum;
+		if(inicial < 0){
+			$( "#"+$(this).attr('id')+" .saldo-final").addClass('panel-danger');
+		}
+		else{
+			$( "#"+$(this).attr('id')+" .saldo-final").addClass('panel-success');	
+		}
+		$( "#"+$(this).attr('id')+" .saldo-final div h3").append(inicial);
 	});
 
 </script>

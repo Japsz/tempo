@@ -79,6 +79,8 @@
                                 <input type="date" name="f_inicio" class="form-control">
                                 <label>Monto de Contrato</label>
                                 <input type="number" name="monto_final" class="form-control">
+                                <label>Cantidad de Pagos</label>
+                                <input type="number" name="cant_pagos" class="form-control">
                             </div>
                         </form>
                     </div>
@@ -117,6 +119,17 @@
             }
         });
     });
+
+    function displayChange(select){
+        if($(select).val() == 'fijo'){
+            $(".div-retorno").css('display', 'none');
+        }
+        else{
+            $(".div-retorno").css('display', 'block');           
+        }    
+    } 
+
+
 
    
 </script>

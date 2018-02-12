@@ -95,6 +95,9 @@ router.get('/render_section/:id_frame', function(req, res, next){
 		    case 'gastos':
 		    	res.redirect('/cdc/mycdc');	       
 		    	break;
+		    case 'graficos':
+		    	res.redirect('/cdc/graficos');	       
+		    	break;
 		    default:
 		        res.render('main/cc_view');
 	}
@@ -119,5 +122,21 @@ router.get('/save_date/:idpago/:fecha', function(req, res, next){
 				res.redirect('/pagos/render_carousel');
 			});
 	});
+});
+
+
+router.post('/factor_pag', function(req, res, next){
+	var input = JSON.parse(JSON.stringify(req.body));
+	console.log(input);
+	req.getConnection(function(err, connection){
+		connection.query("SELECT * FROM ingreso WHERE idingreso = ?", [], function(err, ing){
+			if(err){console.log("Error Selecting : %s", err);}
+			connection.query("INSERT INTO pago SET ?", [], function(err, pago){
+				if(err){console.log("Error Selecting : %s", err);}
+				connection.query("INSERT INTO ingreso SET ?", [])
+			});
+		});
+	});
+    res.redirect('/cdc/show/' + input.idcdc);
 });
 module.exports = router;

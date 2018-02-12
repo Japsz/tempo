@@ -9,7 +9,59 @@ var gasPrice = new Intl.NumberFormat('es-CL',
         { style: 'decimal',
             minimumFractionDigits: 0 });
 %>
-<div class="container" id="key">
+
+
+<!-- Modal -->
+<div class="modal fade" id="factorizacionModal<%= key%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Factorizar Ingreso</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+          <div class="modal-body">
+            <div>
+                  <div style="margin-left: 5%; margin-right: 5%; width: 90%">
+                        <h4 style="display: flex;">Detalle:     <div class="detalle-in"></div></h4>
+                        <h5 style="display: flex;">Monto: $  <div class="monto-in"></div></h5>
+                  </div>
+            </div>
+            
+            <form class="form-fact">
+            <input type="hidden" name="idcdc" value="<%= cdc.idcdc%>">
+            <input type="hidden" name="idingreso" id="idingreso">
+            <input type="hidden" name="detalle" id="detailIngreso">
+                <div class="form-group" style="margin-top: 20px;">
+                  <label for="tipo-fac">Tipo de factorización:</label>
+                  <select class="form-control" name="tipo-fac" onchange="displayChange(this)">
+                    <option value="fijo">Fijo</option>
+                    <option value="retorno" selected>Con retorno</option>
+                  </select>
+                </div>
+                <div class="div-fijo">
+                    <div class="form-group">
+                      <label for="por-venta">Porcentaje de venta:</label>
+                      <input class="form-control" type="number" name="por-venta">
+                    </div>
+                </div>
+                <div class="div-retorno">
+                    <div class="form-group">
+                      <label for="por-ret">Porcentaje de retorno (Intereses): </label>
+                      <input class="form-control" type="number" name="por-ret">
+                    </div>
+                </div>
+             </form>   
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary sendFactorizacion" data-dismiss="modal">Aceptar</button>
+          </div>
+    </div>
+  </div>
+</div>
+<div class="container" id="<%= key%>">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-primary">
@@ -46,15 +98,21 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                         <div class="form-inline">
                             <label>Fecha de pago</label>
                             <input type="date" name="fecha" min="<%= new Date().toLocaleDateString()%>" class="form-control" required>
-                            <input placeholder="Monto" type="number" name="monto" class="form-control" required>
+                            <input placeholder="Monto" type="number" name="monto" class="form-control" max="<%= parseInt(cdc.monto_final) - parseInt(cdc.i_total)%>" required>
                         </div>
+
                         <button class="btn btn-primary sending pull-right" data-tipo="2" style="margin:10px">Agregar</button>
                         <input type="hidden" class="hidden" name="idcdc" value="<%= cdc.idcdc%>">
                         <input type="hidden" class="hidden" name="tipo" value="ingreso">
 
                     </form>
                 </div>
-                <table class="table table-striped table-hover" id="ings">
+                <%if(cdc.i_total == null){cdc.i_total = 0;}%>
+                <div style="display: flex; margin-top: 20px; margin-bottom: 10px;">
+                    <div style="width: 50%" class="panelitem"><p><strong>Ingresos totales:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(cdc.i_total)%></p></div>
+                    <div style="width: 50%" class="panelitem"><p><strong>Ingresos Pendientes:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(parseInt(cdc.monto_final) - parseInt(cdc.i_total))%></p></div>
+                </div>
+                <table class="table table-striped" id="ings">
                     <thead>
                     <tr>
                         <td>Detalle</td>
@@ -66,16 +124,38 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                     </thead>
                     <tbody>
                     <% if(ingreso.length){
-
                     for(var i = 0;i<ingreso.length;i++){
                         total += ingreso[i].monto;
                     %>
                     <tr>
                         <td><%= ingreso[i].detalle%></td>
-                        <td><%= ingreso[i].n_factura%></td>
+                        <%if(ingreso[i].idpago != null){%>
+                            <td><%= ingreso[i].n_factura%></td>    
+                        <%}
+                        else{%>
+                            <td>No facturado</td> 
+                        <%}%>
                         <td><%= new Date(ingreso[i].fecha).toLocaleDateString()%></td>
                         <td><%= gasPrice.format(ingreso[i].monto)%></td>
-                        <td><a class="btn btn-info vercdc" data-idingreso="<%= ingreso[i].idingreso%>"><i class="fa fa-eye"></i>Ver</a></td>
+                        <td>
+                            <div class="dropdown">
+                                <a class="in-options dropdown-toggle" data-toggle="dropdown" data-idingreso="<%= ingreso[i].idingreso%>"><i class="glyphicon glyphicon-option-horizontal"></i></a>
+                                <style type="text/css">
+                                    .dropdown-options li:hover{
+                                        cursor: pointer;
+                                    }
+                                    .in-options:hover{
+                                        cursor: pointer;
+                                    }
+                                </style>
+                                  <ul class="dropdown-menu dropdown-options">
+                                    <%if(ingreso[i].idpago != null){%>
+                                        <li><a class="factorizar" data-idin="<%= ingreso[i].idingreso%>" data-detail="<%= ingreso[i].detalle%>" data-monto="<%= ingreso[i].monto%>" data-toggle="modal" data-target="#factorizacionModal<%= key%>">Factorizar</a></li>
+                                    <%}%>    
+                                        <li><a class="del-ingreso" data-idin="<%= ingreso[i].idingreso%>">Eliminar</a></li>
+                                  </ul>
+                            </div>
+                        </td>
                     </tr>
                     <% }
                     } else {%>
@@ -110,7 +190,15 @@ var gasPrice = new Intl.NumberFormat('es-CL',
 
                     </form>
                 </div>
+<<<<<<< HEAD
                 <table class="table table-striped table-hover" id="egrs">
+=======
+                <%if(cdc.e_total == null){cdc.e_total = 0;}%>
+                <div style="display: flex; margin-top: 20px; margin-bottom: 10px;">
+                    <div style="width: 50%" class="panelitem"><p><strong>Egresos totales:</strong></p><p style="margin-top: 5px"><%= gasPrice.format(cdc.e_total)%></p></div>
+                </div>
+                <table class="table table-striped">
+>>>>>>> 008ace1f8bbe6b6ca3c440a844e32a34099008d7
                     <thead>
                     <tr>
                         <td>Detalle</td>
@@ -129,7 +217,27 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                         <td><%= egreso[i].n_factura%></td>
                         <td><%= new Date(egreso[i].fecha).toLocaleDateString()%></td>
                         <td><%= gasPrice.format(egreso[i].monto)%></td>
-                        <td><a class="btn btn-info vercdc" data-idingreso="<%= egreso[i].idegreso%>"><i class="fa fa-eye"></i>Ver</a></td>
+                        <td>
+                            <div class="dropdown">
+                                <a class="in-options dropdown-toggle" data-toggle="dropdown" data-idingreso="<%= ingreso[i].idingreso%>"><i class="glyphicon glyphicon-option-horizontal"></i></a>
+                                <style type="text/css">
+                                    .dropdown-options li:hover{
+                                        cursor: pointer;
+                                    }
+                                    .in-options:hover{
+                                        cursor: pointer;
+                                    }
+                                </style>
+                                  <ul class="dropdown-menu dropdown-options">
+                                    <%if(egreso[i].idpago != null){%>
+                                        <li><a class="factorizar" data-ideg="<%= egreso[i].idegreso%>" data-detail="<%= egreso[i].detalle%>" data-monto="<%= egreso[i].monto%>" data-toggle="modal" data-target="#factorizacionModal<%= key%>">Factorizar</a></li>
+                                    <%}%>    
+                                        <li>
+                                            <a class="del-egreso" data-idin="<%= egreso[i].idegreso%>">Eliminar</a>
+                                        </li>
+                                  </ul>
+                            </div>
+                        </td>
                     </tr>
                     <% }
                     } else {%>
@@ -171,6 +279,27 @@ var gasPrice = new Intl.NumberFormat('es-CL',
                 $("#page-container").html(data);
             }
         })
+    });
+    $(".factorizar").on('click', function(e){
+        e.preventDefault();
+        $(".detalle-in").html($(this).data("detail"));
+        $("#detailIngreso").val($(this).data("detail"));
+        $(".monto-in").html($(this).data("monto"));
+        $("#idingreso").val($(this).data("idin"));
+    });
+
+
+    $("#factorizacionModal<%= key%> .sendFactorizacion").on('click', function(e){
+            e.preventDefault();
+            var formFact = $(".form-fact").serializeArray();
+            $.ajax({
+                type: 'POST',
+                data: formFact,
+                url: '/factor_pag',
+                success: function(data){
+                    $("#page-container").html(data);                
+                }
+            });
     });
 
 </script>

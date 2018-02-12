@@ -1,0 +1,39 @@
+
+    <div id="morris-area-chart"></div>
+
+    <script type="text/javascript">
+    	 var grapData = [
+	    <%for(var j=0; j< grap.length; j++){
+	    	var tok = grap[j].token.split(',');
+	    	var monto_in = 0; monto_eg = 0;
+	    	for(var k=0; k < tok.length; k++){
+	    		if(tok[k].split('@')[1] == 'ingreso'){
+	    			monto_in += parseInt(tok[k].split('@')[0]);
+	    		}
+	    		else{
+	    			monto_eg += parseInt(tok[k].split('@')[0]);
+	    		}
+	    	}
+	    	%>
+	        {fecha: "<%= new Date(grap[j].fecha).toLocaleDateString()%>",monto_ingreso: <%=monto_in%>, monto_egreso: <%= monto_eg%> }
+	    <%if(j != grap.length-1){%>
+	            ,
+	        <%}
+	    }%>
+	    ];
+
+    	console.log(grapData);
+	    Morris.Area({
+	        element: 'morris-area-chart',
+	        data: grapData,
+	        xkey: 'fecha',
+	        ykeys: ['monto_egreso', 'monto_ingreso'],
+	        labels: ['Egresos', 'Ingresos'],
+	        pointSize: 2,
+	        hideHover: 'auto',
+	        resize: true,
+	        behaveLikeLine: true,
+	        lineColors: ['red', 'blue']
+	    });
+
+    </script>
