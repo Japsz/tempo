@@ -6,7 +6,7 @@
 var total = 0;
 
 var gasPrice = new Intl.NumberFormat('es-CL',
-        { style: 'currency', currency: 'CLP',
+        { style: 'decimal',
             minimumFractionDigits: 0 });
 %>
 <div class="container" id="key">
@@ -54,7 +54,7 @@ var gasPrice = new Intl.NumberFormat('es-CL',
 
                     </form>
                 </div>
-                <table class="table table-striped">
+                <table class="table table-striped table-hover" id="ings">
                     <thead>
                     <tr>
                         <td>Detalle</td>
@@ -110,7 +110,7 @@ var gasPrice = new Intl.NumberFormat('es-CL',
 
                     </form>
                 </div>
-                <table class="table table-striped">
+                <table class="table table-striped table-hover" id="egrs">
                     <thead>
                     <tr>
                         <td>Detalle</td>
@@ -144,7 +144,9 @@ var gasPrice = new Intl.NumberFormat('es-CL',
     </div>
 </div>
 <script type="text/javascript">
-    var esegreso
+    var esegreso;
+    data_tables("#ings");
+    data_tables("#egrs");
     $("#<%= key%> .pay").click(function(e){
         esegreso = $(this).data('is_e');
         if(parseInt(esegreso))

@@ -12,7 +12,7 @@ var gasPrice = new Intl.NumberFormat('es-CL',
 		<div class="panel-heading">
 			<h1 class="page-header">Centros de Costo			<a class="btn btn-success pull-right" data-toggle="modal" href="#new_cdc"> + Crear</a></h1>
 		</div>
-		<table class="table table-striped">
+		<table class="table table-striped table-hover" id="centros">
 			<thead>
 			<tr>
 				<th>Nombre</th>
@@ -43,6 +43,7 @@ var gasPrice = new Intl.NumberFormat('es-CL',
 </div>
 
 <script type="text/javascript">
+	data_tables("#centros");
 	$("#<%= key%> .vercdc").click(function(e){
 	    $.ajax({
 			url:"/cdc/show/" + $(this).data('idcdc'),

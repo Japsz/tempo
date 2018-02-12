@@ -103,7 +103,7 @@ router.get('/render_section/:id_frame', function(req, res, next){
 router.get('/render_pagos', function(req, res, next){
 	req.getConnection(function(err,connection){
         if(err){console.log("Error Selecting : %s", err);}
-        connection.query("SELECT * FROM cdc",function(err,rows){
+        connection.query("SELECT * FROM cdc WHERE idcdc > 1",function(err,rows){
             if(err){console.log("Error Selecting : %s", err);}
             res.render("pagos/pagos_calendario", {titulo: "Proyeccion de Pagos ",data:rows});
         });
